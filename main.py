@@ -1,25 +1,24 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 import os
 
 app = FastAPI()
 
-# === Caminho absoluto da pasta principal ===
+# Caminho absoluto da pasta do projeto (onde está index.html, css/, recursos/, etc.)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# === Servir arquivos estáticos ===
-app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
+# Servir TODO o projeto como site estático
+# /           -> index.html
+# /css/...    -> arquivos em css/
+# /js/...     -> arquivos em js/
+# /recursos/... -> arquivos em recursos/
+# /ferramentas/... -> arquivos em ferramentas/
+# /comunidade/...  -> arquivos em comunidade/
+# /gestao/...      -> arquivos em gestao/
+app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="static")
 
-# === Página inicial ===
-@app.get("/")
-async def serve_index():
-    index_path = os.path.join(BASE_DIR, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"detail": "index.html não encontrado"}
-
-# === Rota de teste ===
+# Rota de teste (não conflita com static porque começa com /api)
 @app.get("/api/status")
-async def status():
-    return {"status": "API rodando com sucesso no Render!"}
+def status():
+    return JSONResponse({"status": "online"})
