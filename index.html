@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Sombrio - Minimalista</title>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase UMD v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+    <!-- CSS do projeto -->
+    <link rel="stylesheet" href="css/hub.css">
+</head>
+<body class="min-h-screen text-gray-100 antialiased">
+
+    <!-- VÍDEO DE FUNDO (hub.mp4) -->
+    <video id="bg-video" autoplay muted loop playsinline>
+        <source src="recursos/hub.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo em HTML5.
+    </video>
+
+    <!-- 1. Cabeçalho -->
+    <header class="bg-gray-900/80 backdrop-blur-sm shadow-xl sticky top-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo (dobrada) -->
+                <a href="#" class="h-16">
+                    <img 
+                        src="recursos/logo.png" 
+                        alt="DARK.PROJETO Logo" 
+                        class="h-full w-auto"
+                        onerror="this.onerror=null; this.src='uploaded:image_5cefbd.png-474a27d6-204b-4791-a324-b465762a68ee';"
+                    >
+                </a>
+                <!-- Navegação Desktop -->
+                <nav class="hidden md:flex space-x-8">
+                    <!-- Comunidade: protegido (abre modal de acesso) -->
+                    <a href="#" onclick="openCommunityAccess(event)" class="text-gray-300 hover:text-indigo-400 transition duration-300 px-3 py-2 rounded-md font-medium">
+                        Comunidade
+                    </a>
+                    <a href="https://twitter.com/seuperfil" target="_blank" class="text-gray-300 hover:text-indigo-400 transition duration-300 px-3 py-2 rounded-md font-medium">X (Twitter)</a>
+                    <a href="https://linkedin.com/in/seuperfil" target="_blank" class="text-gray-300 hover:text-indigo-400 transition duration-300 px-3 py-2 rounded-md font-medium">LinkedIn</a>
+                    <button id="login-button-desktop" class="text-gray-300 hover:text-indigo-400 transition duration-300 px-3 py-2 rounded-md font-medium">Login</button>
+                </nav>
+                <!-- Menu Mobile -->
+                <button id="menu-button" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Navegação Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-t border-gray-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <!-- Comunidade Mobile: protegido -->
+                <a href="#" onclick="openCommunityAccess(event)" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">
+                    Comunidade
+                </a>
+                <a href="https://twitter.com/seuperfil" target="_blank" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">X (Twitter)</a>
+                <a href="https://linkedin.com/in/seuperfil" target="_blank" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">LinkedIn</a>
+                <button id="login-button-mobile" class="w-full text-left bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold mt-2 py-2 px-3 rounded-lg transition duration-300">
+                    Login
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Banner Google (top fino) -->
+    <section id="google-ad-space" class="py-2 bg-black border-b border-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+            <div class="w-full max-w-4xl bg-gray-900 border border-gray-700 rounded-lg p-1 text-center">
+                <p class="text-xs text-gray-500 mb-1">Google AdSense Space</p>
+                <div class="mx-auto bg-gray-800 text-gray-400 flex items-center justify-center rounded-md h-8 md:h-12" style="width: 100%; max-width: 728px;">
+                    <p class="text-xs md:text-sm font-semibold">Anúncio Aqui (Fino)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Hero -->
+    <section id="banner-principal" class="pt-16 pb-24 text-center">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight">
+                Calcule <span class="text-indigo-400">Tudo</span>.
+                <br>
+                Da sua <span class="text-indigo-400">Viagem</span>.
+            </h1>
+            <p class="text-base text-gray-400 mb-8 max-w-3xl mx-auto">
+                Quanto custa viajar? Quanto custa morar fora? Qual o salário no exterior? O que preciso saber para viajar? 
+                <br class="hidden sm:block">
+                Descubra usando as calculadoras abaixo.
+            </p>
+
+            <!-- NAV DE CALCULADORAS (BOTÃO PRINCIPAL + ITENS EXPANSÍVEIS) -->
+            <div class="calc-nav-wrapper">
+                <nav class="calc-nav" aria-label="Calculadoras de viagem">
+                    <ul class="calc-nav-list">
+                        <!-- Botão principal -->
+                        <li style="--index: 1;">
+                            <button type="button" id="calc-main-trigger">
+                                <span>
+                                    <!-- Ícone de calculadora -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"
+                                              d="M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 5h8m-6 4h.01M12 12h.01M14 12h.01M10 15h.01M12 15h.01M14 15h.01" />
+                                    </svg>
+                                    <span>Calculadoras</span>
+                                </span>
+                            </button>
+                        </li>
+
+                        <!-- Custo de vida (Fora/Brasil) -->
+                        <li style="--index: 2;">
+                            <a href="ferramentas/calc-custodevidaexterior-brasil.html">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M12 2a9.99 9.99 0 0 0-9.95 9.12 1 1 0 0 0 1.99.16A8.01 8.01 0 0 1 12 4a8 8 0 0 1 7.96 7.06 1 1 0 0 0 1.99-.24A10 10 0 0 0 12 2z"/>
+                                    </svg>
+                                    <span>Custo de vida (Fora/Brasil)</span>
+                                </span>
+                            </a>
+                        </li>
+
+                        <!-- Custo de Viagem -->
+                        <li style="--index: 3%;">
+                            <a href="ferramentas/cal.custodevida.html">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M2 11h20v2H2zm3 5h14v2H5zM7 7h10v2H7z"/>
+                                    </svg>
+                                    <span>Custo de Viagem</span>
+                                </span>
+                            </a>
+                        </li>
+
+                        <!-- Custo de Intercâmbio -->
+                        <li style="--index: 4%;">
+                            <a href="ferramentas/calc-intercambio.html">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M5 4h14v2H5zm2 4h10v2H7zm-2 4h14v2H5zm2 4h6v2H7z"/>
+                                    </svg>
+                                    <span>Custo de Intercâmbio</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Banner 2 (Premium) -->
+            <div class="py-6 bg-black/50 mx-auto w-full max-w-4xl border border-gray-900 rounded-lg">
+                <div class="px-4 sm:px-6 lg:px-8 flex justify-center">
+                    <div class="w-full max-w-4xl p-1 text-center">
+                        <p class="text-xs text-gray-500 mb-2">Google AdSense Space</p>
+                        <div class="mx-auto text-gray-400 flex items-center justify-center rounded-md h-36 md:h-64" style="width: 100%; max-width: 728px; background-color:#1F2933;">
+                            <p class="text-sm md:text-xl font-semibold">Anúncio Aqui (Espaço Premium)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. BOTÕES ESPECIAIS (ACIMA DE NOVIDADE DO DIA) -->
+    <section class="container mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+            <!-- Salários Reais -->
+            <a href="salario-real.html" class="cube-btn">
+                <span>Salários Reais</span>
+                <span>Salários Reais</span>
+                <span>Salários Reais</span>
+                <span>Salários Reais</span>
+            </a>
+
+            <!-- Para você, futuro comissário! -->
+            <a href="ferramentas/comissario.html" class="cube-btn">
+                <span>Para você, futuro comissário!</span>
+                <span>Para você, futuro comissário!</span>
+                <span>Para você, futuro comissário!</span>
+                <span>Para você, futuro comissário!</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 5. Conteúdo Principal -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- 5.1 Novidade do dia -->
+        <section id="novidade-dia" class="py-16 border-t border-gray-800">
+            <h2 class="text-4xl font-bold text-center mb-12">Novidade do dia!</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- TEXTO: você edita diariamente -->
+                <div>
+                    <h3 class="text-xl font-semibold text-indigo-400 mb-4">
+                        Conteúdo especial para quem está planejando a próxima jornada
+                    </h3>
+                    <p class="text-lg text-gray-400 mb-4">
+                        Aqui você pode escrever o texto do dia. Mantenha 2–3 parágrafos com o insight principal,
+                        uma dica prática ou um destaque importante para o nômade ou viajante.
+                    </p>
+                    <p class="text-lg text-gray-400">
+                        Com o tempo, você pode mover os conteúdos antigos para a página de artigos
+                        e deixar aqui sempre o destaque mais recente.
+                    </p>
+                </div>
+
+                <!-- IMAGEM: conteudo-dia.png -->
+                <div class="bg-gray-800 p-0 rounded-xl shadow-inner shadow-gray-900 h-64 flex items-center justify-center overflow-hidden">
+                    <img 
+                        src="recursos/conteudo-dia.png" 
+                        alt="Novidade do dia" 
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+            </div>
+        </section>
+
+        <!-- 5.2 NOVAS LEITURAS -->
+        <section id="leituras" class="py-16 border-t border-gray-800">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                Novas Leituras para você, viajante!
+            </h2>
+            <p class="text-center text-gray-400 mb-12 max-w-3xl mx-auto text-base">
+                Textos curtos, ideias frescas e reflexões que chegaram hoje na nossa biblioteca.
+                Clique para abrir e mergulhar na leitura.
+            </p>
+
+            <div id="leituras-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Itens serão preenchidos via JS -->
+                <div class="col-span-full text-center text-gray-500 text-sm" id="leituras-loading">
+                    Carregando leituras...
+                </div>
+            </div>
+        </section>
+
+        <!-- 5.3 Contato -->
+        <section id="contato" class="py-16 border-t border-gray-800">
+            <h2 class="text-4xl font-bold text-center mb-4">Fale Connosco</h2>
+            <p class="text-center text-gray-400 mb-10 max-w-2xl mx-auto text-base">
+                Espaço aberto para perguntas, dúvidas, sugestões e elogios.  
+                Escreva com calma: queremos entender o que você precisa ou o que está achando do projeto.
+            </p>
+            <div class="max-w-xl mx-auto bg-gray-900 p-8 rounded-xl shadow-2xl border border-gray-800">
+                <form onsubmit="handleFormSubmit(event)">
+                    <div class="mb-6">
+                        <label for="name" class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                        <input type="text" id="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="O seu nome">
+                    </div>
+                    <div class="mb-6">
+                        <label for="email" class="block text-gray-300 text-sm font-medium mb-2">E-mail</label>
+                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="o.seu@email.com">
+                    </div>
+                    <div class="mb-6">
+                        <label for="message" class="block text-gray-300 text-sm font-medium mb-2">Mensagem</label>
+                        <textarea id="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Conte aqui suas perguntas, dúvidas, sugestões ou elogios"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-300 transform hover:scale-[1.01]">
+                        Enviar Mensagem
+                    </button>
+                    <p id="message-status" class="text-center mt-4 text-green-400 hidden"></p>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal de Login / Criação de Conta (Supabase) - GERAL -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeLoginModal()">&times;</span>
+
+            <h3 id="auth-modal-title" class="text-3xl font-bold text-white text-center mb-4">
+                Iniciar Sessão
+            </h3>
+
+            <!-- Abas Login / Criar conta -->
+            <div class="flex justify-center gap-3 mb-6 text-sm">
+                <button id="tab-login" type="button" class="px-4 py-2 rounded-full bg-indigo-600 text-white font-semibold">
+                    Login
+                </button>
+                <button id="tab-signup" type="button" class="px-4 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-gray-700">
+                    Criar conta
+                </button>
+            </div>
+
+            <!-- FORM LOGIN -->
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label for="login-email" class="block text-gray-300 text-sm font-medium mb-2">E-mail</label>
+                    <input type="email" id="login-email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="seu@email.com" required>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-gray-300 text-sm font-medium mb-2">Senha</label>
+                    <input type="password" id="login-password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Sua senha" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-300 transform hover:scale-[1.01]">
+                    Entrar
+                </button>
+                <div class="text-center mt-3 text-sm">
+                    <button type="button" id="go-to-signup" class="text-indigo-400 hover:text-indigo-300">
+                        Ainda não tenho conta
+                    </button>
+                </div>
+            </form>
+
+            <!-- FORM CRIAR CONTA -->
+            <form id="signup-form" class="space-y-5 hidden">
+                <div>
+                    <label for="signup-name" class="block text-gray-300 text-sm font-medium mb-2">Nome</label>
+                    <input type="text" id="signup-name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Seu nome" required>
+                </div>
+                <div>
+                    <label for="signup-email" class="block text-gray-300 text-sm font-medium mb-2">E-mail</label>
+                    <input type="email" id="signup-email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="seu@email.com" required>
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-gray-300 text-sm font-medium mb-2">Senha</label>
+                    <input type="password" id="signup-password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-300 transform hover:scale-[1.01]">
+                    Criar conta
+                </button>
+                <div class="text-center mt-3 text-sm">
+                    <button type="button" id="go-to-login" class="text-gray-400 hover:text-white">
+                        Já tenho conta
+                    </button>
+                </div>
+            </form>
+
+            <!-- STATUS / ERROS -->
+            <p id="auth-status" class="mt-4 text-center text-sm text-gray-300 min-h-[1.25rem]"></p>
+        </div>
+    </div>
+
+    <!-- Modal de LEITURA dos .txt -->
+    <div id="leitura-modal" class="modal">
+        <div class="modal-content max-h-[80vh] overflow-y-auto">
+            <span class="close-button" onclick="closeLeituraModal()">&times;</span>
+            <h3 id="leitura-titulo" class="text-2xl font-bold text-white mb-4">
+                Título da leitura
+            </h3>
+            <pre id="leitura-texto" class="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed"></pre>
+        </div>
+    </div>
+
+    <!-- MODAL ESPECÍFICO DE ACESSO À COMUNIDADE -->
+    <div id="community-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden justify-center items-center z-[9999]">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-8 w-full max-w-2xl relative">
+
+            <!-- Botão fechar -->
+            <button onclick="closeCommunityModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+
+            <h2 id="community-modal-title" class="text-center text-3xl font-bold text-white mb-6">
+                Acessar Comunidade
+            </h2>
+
+            <!-- Tabs -->
+            <div class="flex flex-wrap justify-center gap-3 mb-6 text-sm">
+                <button id="community-tab-login" type="button" class="px-4 py-2 rounded-full bg-indigo-600 text-white font-semibold">
+                    Login
+                </button>
+                <button id="community-tab-signup" type="button" class="px-4 py-2 rounded-full bg-gray-800 text-gray-300">
+                    Criar conta
+                </button>
+                <button id="community-tab-reset" type="button" class="px-4 py-2 rounded-full bg-gray-800 text-gray-300">
+                    Redefinir senha
+                </button>
+            </div>
+
+            <!-- FORM LOGIN COMUNIDADE -->
+            <form id="community-login-form" class="space-y-5">
+                <div>
+                    <label class="block text-gray-300 text-sm mb-2">E-mail</label>
+                    <input id="community-login-email" type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm mb-2">Senha</label>
+                    <input id="community-login-password" type="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 font-bold rounded-lg">
+                    Entrar na Comunidade
+                </button>
+            </form>
+
+            <!-- FORM RESET SENHA -->
+            <form id="community-reset-form" class="space-y-5 hidden">
+                <div>
+                    <label class="block text-gray-300 text-sm mb-2">E-mail</label>
+                    <input id="community-reset-email" type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 font-bold rounded-lg">
+                    Enviar link de redefinição
+                </button>
+            </form>
+
+            <!-- FORM CRIAR CONTA COMUNIDADE -->
+            <form id="community-signup-form" class="space-y-5 hidden overflow-y-auto max-h-[65vh] pr-2">
+
+                <h3 class="text-xl font-bold text-white">Informações Pessoais</h3>
+
+                <div>
+                    <label class="block text-gray-300 text-sm mb-2">Nome Completo</label>
+                    <input id="community-signup-name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 text-sm mb-2">E-mail</label>
+                    <input id="community-signup-email" type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm mb-2">Senha</label>
+                        <input id="community-signup-password" type="password" minlength="6" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm mb-2">Confirmar Senha</label>
+                        <input id="community-signup-password-confirm" type="password" minlength="6" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-white pt-4">Endereço</h3>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <input id="community-country" placeholder="País" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                    <input id="community-state" placeholder="Estado" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <input id="community-city" placeholder="Cidade" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                    <input id="community-cep" placeholder="CEP" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" required>
+                </div>
+
+                <h3 class="text-xl font-bold text-white pt-4">Perguntas Pessoais</h3>
+
+                <input id="qp1" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="1. O que você mais gosta de fazer no tempo livre?" required>
+                <input id="qp2" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="2. Um hábito que melhorou sua vida recentemente?" required>
+                <input id="qp3" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="3. Um livro, filme ou série que marcou você?" required>
+                <input id="qp4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="4. Um objetivo importante para os próximos 12 meses?" required>
+                <input id="qp5" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="5. Como você gosta de aprender coisas novas?" required>
+
+                <h3 class="text-xl font-bold text-white pt-4">Perguntas Sobre Viagens</h3>
+
+                <input id="qv1" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="1. Qual destino dos sonhos você ainda não conhece?" required>
+                <input id="qv2" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="2. Você prefere cidade grande, natureza ou praia?" required>
+                <input id="qv3" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="3. Qual foi a viagem mais transformadora da sua vida?" required>
+                <input id="qv4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="4. O que mais pesa na hora de escolher um destino?" required>
+                <input id="qv5" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white" placeholder="5. Você costuma viajar sozinho(a), em casal ou em grupo?" required>
+
+                <div class="mt-6 bg-gray-800 p-4 rounded-lg border border-gray-700 text-gray-300 text-xs leading-relaxed">
+                    <strong>Termos de Uso</strong><br><br>
+                    Ao criar uma conta na plataforma, você declara estar ciente de que este ambiente digital é destinado exclusivamente para interação, troca de conhecimento, suporte e compartilhamento de experiências entre viajantes e entusiastas. Você concorda em manter respeito, ética e cordialidade com todos os membros, não publicar conteúdos ofensivos, ilegais ou que violem direitos autorais. Também autoriza o armazenamento das informações fornecidas para fins de funcionamento da plataforma e personalização de conteúdo. O uso contínuo do serviço implica aceitação integral destes termos. Caso discorde de qualquer cláusula, não prossiga com o cadastro.
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input id="community-accept-terms" type="checkbox">
+                    <label for="community-accept-terms" class="text-gray-300 text-sm">
+                        Li e aceito os termos
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 font-bold rounded-lg">
+                    Criar conta e entrar
+                </button>
+            </form>
+
+            <p id="community-status" class="mt-4 text-center text-sm text-gray-300 min-h-[1.25rem]"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 mt-12 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Dark.Projeto. Todos os direitos reservados. | Desenvolvido com <span class="text-indigo-500">Elegância</span>.</p>
+        </div>
+    </footer>
+
+    <!-- Banner fino fixo no rodapé -->
+    <div id="footer-banner">
+        <p>Google Ads — Banner fino</p>
+    </div>
+
+    <!-- JS do projeto -->
+    <script src="js/hub.js"></script>
+</body>
+</html>

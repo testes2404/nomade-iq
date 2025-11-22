@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora — Intercâmbio (Quanto juntar)</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: #e5e7eb;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.8);
+      border-radius: 999px;
+    }
+
+    .ads-slot {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px dashed rgba(148,163,184,0.35);
+      backdrop-filter: blur(8px);
+      border-radius: 0.75rem;
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      text-align: center;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ads-slot span {
+      opacity: 0.9;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .ads-row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+    @media (max-width: 640px) {
+      .ads-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <img src="../recursos/logo.png" alt="Nômade IQ" class="h-8 w-auto" />
+        <div class="leading-tight">
+          <p class="text-[11px] uppercase tracking-[0.28em] text-slate-400">
+            Calculadora
+          </p>
+          <h1 class="text-sm sm:text-base font-semibold text-slate-50">
+            Intercâmbio — Quanto juntar até o embarque
+          </h1>
+        </div>
+      </div>
+
+      <a href="../index.html"
+         class="text-[11px] sm:text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800 transition">
+        Voltar
+      </a>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+      <!-- Intro -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <h2 class="text-lg sm:text-xl font-semibold text-slate-50 mb-2">
+          Quanto falta para o seu intercâmbio sair do papel?
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mb-2">
+          Abaixo você encontra pacotes reais de intercâmbio (preços inspirados em agências especializadas).
+          Escolha um pacote, defina em quantos meses quer embarcar e veja
+          <span class="font-semibold text-slate-200">quanto precisa guardar por mês</span>
+          para chegar lá.
+        </p>
+        <p class="text-xs sm:text-sm text-slate-400">
+          A ideia não é fechar com uma agência específica, mas ter um
+          <b>norte financeiro</b> para planejar sua meta com os pés no chão.
+        </p>
+      </section>
+
+      <!-- FORM + ANÚNCIOS -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <h3 class="text-sm font-semibold text-slate-100 mb-3">
+          Escolha o pacote e o prazo
+        </h3>
+
+        <form id="form-intercambio" class="space-y-5">
+
+          <!-- Pacote -->
+          <div class="space-y-2">
+            <label for="pacote" class="block text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+              Pacote de intercâmbio
+            </label>
+            <select
+              id="pacote"
+              class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+            >
+              <option value="">Carregando opções...</option>
+            </select>
+            <p class="text-[11px] text-slate-500">
+              Os valores são referências para pacotes com curso, acomodação e taxas básicas incluídas.
+            </p>
+          </div>
+
+          <!-- Ads 1-2 -->
+          <div class="ads-row-2">
+            <div id="ads-slot-1" class="ads-slot">
+              <span>Espaço para anúncio #01</span>
+            </div>
+            <div id="ads-slot-2" class="ads-slot">
+              <span>Espaço para anúncio #02</span>
+            </div>
+          </div>
+
+          <!-- Prazo -->
+          <div class="space-y-2">
+            <label for="prazo" class="block text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+              Em quantos meses você quer embarcar?
+            </label>
+            <div class="grid grid-cols-3 gap-3 max-w-xs">
+              <input
+                id="prazo"
+                type="number"
+                min="1"
+                max="120"
+                placeholder="Ex: 18"
+                class="col-span-2 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                required
+              />
+              <div class="flex items-center text-[11px] text-slate-400">
+                meses
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              A calculadora divide o valor total pelo prazo e mostra quanto guardar por mês, semana e dia.
+            </p>
+          </div>
+
+          <!-- Ads 3-4 -->
+          <div class="ads-row-2">
+            <div id="ads-slot-3" class="ads-slot">
+              <span>Espaço para anúncio #03</span>
+            </div>
+            <div id="ads-slot-4" class="ads-slot">
+              <span>Espaço para anúncio #04</span>
+            </div>
+          </div>
+
+          <!-- Poupança inicial (opcional) -->
+          <div class="space-y-2">
+            <label for="poupanca_inicial" class="block text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+              Poupança inicial (opcional)
+            </label>
+            <input
+              id="poupanca_inicial"
+              type="number"
+              min="0"
+              step="100"
+              placeholder="Ex: 2000 (se você já tem algo guardado)"
+              class="w-full sm:max-w-xs rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+            />
+            <p class="text-[11px] text-slate-500">
+              Se você já tem um valor guardado, descontamos isso do custo total na hora do cálculo.
+            </p>
+          </div>
+
+          <!-- Ads 5-6 -->
+          <div class="ads-row-2">
+            <div id="ads-slot-5" class="ads-slot">
+              <span>Espaço para anúncio #05</span>
+            </div>
+            <div id="ads-slot-6" class="ads-slot">
+              <span>Espaço para anúncio #06</span>
+            </div>
+          </div>
+
+          <!-- Botão -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
+            <button
+              type="submit"
+              id="btn-calcular"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition w-full sm:w-auto"
+            >
+              <span id="btn-calcular-label">Calcular quanto guardar</span>
+              <svg id="btn-calcular-spinner" class="h-4 w-4 animate-spin hidden" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
+              </svg>
+            </button>
+
+            <p id="status-msg" class="text-[11px] sm:text-xs text-slate-400 min-h-[1.25rem]">
+              Carregando pacotes de intercâmbio...
+            </p>
+          </div>
+        </form>
+      </section>
+
+      <!-- RESULTADOS -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100">
+              Meta financeira para esse intercâmbio
+            </h3>
+            <p class="text-[11px] text-slate-500">
+              Os valores são estimativas. A ideia é ter uma meta clara para conversar com consultores, bancos e com você mesmo.
+            </p>
+          </div>
+        </div>
+
+        <!-- Pacote selecionado -->
+        <div id="pacote-detalhes" class="mb-4 hidden">
+          <p class="text-xs sm:text-sm text-slate-200 font-semibold" id="pacote-nome"></p>
+          <p class="text-[11px] text-slate-400 mt-1" id="pacote-resumo"></p>
+        </div>
+
+        <!-- Totais -->
+        <div id="totais-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 hidden">
+          <div class="rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-3">
+            <p class="text-[11px] text-slate-400">Custo total estimado</p>
+            <p id="total-pacote" class="text-sm sm:text-lg font-semibold text-slate-50">–</p>
+          </div>
+          <div class="rounded-xl bg-slate-900/70 border border-emerald-500/40 px-3 py-3">
+            <p class="text-[11px] text-slate-400">Quanto guardar por mês</p>
+            <p id="valor-mensal" class="text-sm sm:text-lg font-semibold text-emerald-300">–</p>
+          </div>
+          <div class="rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-3">
+            <p class="text-[11px] text-slate-400">Aproximado por semana / dia</p>
+            <p id="valor-semanal-diario" class="text-xs sm:text-sm font-semibold text-slate-100">–</p>
+          </div>
+        </div>
+
+        <!-- Lista simples com outros pacotes (opcional) -->
+        <div id="lista-pacotes" class="thin-scrollbar max-h-[260px] overflow-y-auto space-y-2 text-xs sm:text-sm">
+          <p class="text-[11px] text-slate-500">
+            Assim que as opções carregarem, você verá aqui um resumo dos pacotes de intercâmbio base usados na calculadora.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- SCRIPT -->
+  <script>
+    const API_URL = "http://localhost:8000/api/intercambio/ofertas";
+
+    const selectPacote = document.getElementById("pacote");
+    const prazoInput = document.getElementById("prazo");
+    const poupancaInicialInput = document.getElementById("poupanca_inicial");
+    const formIntercambio = document.getElementById("form-intercambio");
+
+    const btnCalcular = document.getElementById("btn-calcular");
+    const btnCalcularLabel = document.getElementById("btn-calcular-label");
+    const btnCalcularSpinner = document.getElementById("btn-calcular-spinner");
+    const statusMsg = document.getElementById("status-msg");
+
+    const pacoteDetalhes = document.getElementById("pacote-detalhes");
+    const pacoteNome = document.getElementById("pacote-nome");
+    const pacoteResumo = document.getElementById("pacote-resumo");
+
+    const totaisContainer = document.getElementById("totais-container");
+    const totalPacoteEl = document.getElementById("total-pacote");
+    const valorMensalEl = document.getElementById("valor-mensal");
+    const valorSemanalDiarioEl = document.getElementById("valor-semanal-diario");
+
+    const listaPacotes = document.getElementById("lista-pacotes");
+
+    let pacotesCache = [];
+
+    function setLoading(isLoading) {
+      btnCalcular.disabled = isLoading;
+      btnCalcularSpinner.classList.toggle("hidden", !isLoading);
+      btnCalcularLabel.textContent = isLoading ? "Calculando..." : "Calcular quanto guardar";
+    }
+
+    function setStatus(message, type = "info") {
+      statusMsg.textContent = message || "";
+      statusMsg.classList.remove("text-slate-400", "text-emerald-400", "text-rose-400");
+      if (!message) return;
+      if (type === "success") statusMsg.classList.add("text-emerald-400");
+      else if (type === "error") statusMsg.classList.add("text-rose-400");
+      else statusMsg.classList.add("text-slate-400");
+    }
+
+    function formatBRL(num) {
+      return num.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function limparResultados() {
+      pacoteDetalhes.classList.add("hidden");
+      totaisContainer.classList.add("hidden");
+      totalPacoteEl.textContent = "–";
+      valorMensalEl.textContent = "–";
+      valorSemanalDiarioEl.textContent = "–";
+    }
+
+    async function carregarPacotes() {
+      try {
+        const resp = await fetch(API_URL);
+        if (!resp.ok) throw new Error("Erro HTTP " + resp.status);
+        const data = await resp.json();
+        pacotesCache = data || [];
+
+        // Preenche o select
+        selectPacote.innerHTML = "";
+        if (!pacotesCache.length) {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "Nenhum pacote encontrado (use valores estimados)";
+          selectPacote.appendChild(opt);
+          setStatus("Nenhum pacote encontrado. Tente novamente mais tarde.", "error");
+        } else {
+          const optDefault = document.createElement("option");
+          optDefault.value = "";
+          optDefault.textContent = "Selecione um pacote de referência";
+          selectPacote.appendChild(optDefault);
+
+          pacotesCache.forEach((p, idx) => {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            const preco = p.preco_texto || (p.preco_num ? formatBRL(p.preco_num) : "");
+            opt.textContent = `${p.titulo}${preco ? " — " + preco : ""}`;
+            if (idx === 0) opt.selected = true;
+            selectPacote.appendChild(opt);
+          });
+          setStatus("Pacotes carregados. Escolha um e preencha o prazo.", "info");
+        }
+
+        // Lista simples dos pacotes
+        listaPacotes.innerHTML = "";
+        if (pacotesCache.length) {
+          pacotesCache.forEach((p) => {
+            const card = document.createElement("div");
+            card.className =
+              "rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2 text-[11px] sm:text-xs";
+
+            const titulo = document.createElement("p");
+            titulo.className = "font-semibold text-slate-50";
+            titulo.textContent = p.titulo;
+
+            const preco = document.createElement("p");
+            preco.className = "text-slate-300 mt-0.5";
+            preco.textContent = p.preco_texto || (p.preco_num ? formatBRL(p.preco_num) : "Valor sob consulta");
+
+            const resumo = document.createElement("p");
+            resumo.className = "text-slate-400 mt-0.5";
+            resumo.textContent = p.resumo || "";
+
+            card.appendChild(titulo);
+            card.appendChild(preco);
+            if (resumo.textContent) card.appendChild(resumo);
+            listaPacotes.appendChild(card);
+          });
+        } else {
+          const p = document.createElement("p");
+          p.className = "text-[11px] text-slate-500";
+          p.textContent =
+            "Não foi possível carregar pacotes agora. Use preços estimados manualmente como referência.";
+          listaPacotes.appendChild(p);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus("Não foi possível carregar pacotes. Tente novamente mais tarde.", "error");
+      }
+    }
+
+    formIntercambio.addEventListener("submit", (e) => {
+      e.preventDefault();
+      limparResultados();
+
+      const pacoteId = selectPacote.value;
+      const prazoMeses = Number(prazoInput.value);
+      const poupancaInicial = Number(poupancaInicialInput.value || "0");
+
+      if (!prazoMeses || prazoMeses <= 0) {
+        setStatus("Informe um prazo em meses válido.", "error");
+        return;
+      }
+
+      if (!pacoteId) {
+        setStatus("Selecione um pacote de intercâmbio para basear o cálculo.", "error");
+        return;
+      }
+
+      const pacote = pacotesCache.find((p) => p.id === pacoteId);
+      if (!pacote || !pacote.preco_num) {
+        setStatus("Não foi possível determinar o valor do pacote. Tente outro.", "error");
+        return;
+      }
+
+      const total = Math.max(pacote.preco_num - (poupancaInicial || 0), 0);
+
+      if (total <= 0) {
+        setStatus("Com a poupança atual, você já cobriria esse pacote. Revise o valor inicial.", "info");
+      } else {
+        setStatus("Meta calculada. Agora é organizar o plano de poupança.", "success");
+      }
+
+      const mensal = total / prazoMeses;
+      const semanas = prazoMeses * 4.3;
+      const dias = prazoMeses * 30;
+
+      const semanal = total / semanas;
+      const diario = total / dias;
+
+      pacoteNome.textContent = pacote.titulo;
+      pacoteResumo.textContent = pacote.resumo || "";
+      pacoteDetalhes.classList.remove("hidden");
+
+      totalPacoteEl.textContent = formatBRL(pacote.preco_num);
+      valorMensalEl.textContent = formatBRL(mensal);
+      valorSemanalDiarioEl.textContent =
+        `${formatBRL(semanal)} / semana • ${formatBRL(diario)} / dia`;
+
+      totaisContainer.classList.remove("hidden");
+    });
+
+    // Inicialização
+    (async () => {
+      setStatus("Carregando pacotes de intercâmbio...");
+      await carregarPacotes();
+    })();
+  </script>
+</body>
+</html>

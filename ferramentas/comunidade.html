@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comunidade – Nômade IQ</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase UMD -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --bg-elevated: #020617;
+      --border-subtle: #1e293b;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+      --accent-soft-strong: rgba(79, 70, 229, 0.18);
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Inter", sans-serif;
+    }
+
+    .scroll-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scroll-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scroll-thin::-webkit-scrollbar-thumb {
+      background: #1f2933;
+      border-radius: 999px;
+    }
+
+    /* Botão primário */
+    .btn-primary {
+      @apply inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-semibold transition;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #f9fafb;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.45);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    /* Avatar círculo com fallback inicial */
+    .avatar-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, #6366f1, #020617);
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    /* Modal genérico */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .modal.open {
+      display: flex;
+    }
+
+    /* Linha do post */
+    .post-card:hover {
+      background: radial-gradient(circle at 0 0, rgba(79, 70, 229, 0.08), #020617);
+    }
+  </style>
+</head>
+<body class="min-h-screen scroll-thin">
+
+  <!-- Wrapper -->
+  <div class="mx-auto max-w-6xl px-3 sm:px-4 lg:px-6 py-4 lg:py-6 grid grid-cols-12 gap-4 lg:gap-6">
+
+    <!-- COL 1 – Menu lateral (estilo Twitter) -->
+    <aside class="hidden md:flex md:flex-col md:col-span-3 gap-4">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+          NQ
+        </div>
+        <div>
+          <p class="text-sm text-slate-400 uppercase tracking-[0.22em]">Comunidade</p>
+          <p class="text-lg font-semibold">Nômade IQ</p>
+        </div>
+      </div>
+
+      <!-- Botão ver perfil / configurações -->
+      <button id="open-profile-btn" class="flex items-center gap-3 px-3 py-2 rounded-full bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-900/70 transition">
+        <div id="sidebar-avatar" class="avatar-circle w-9 h-9 text-sm">A</div>
+        <div class="flex flex-col items-start">
+          <span id="sidebar-name" class="text-sm font-semibold">Seu perfil</span>
+          <span class="text-xs text-slate-400">Configurar nome e foto</span>
+        </div>
+      </button>
+
+      <!-- Botão criar comunidade -->
+      <button id="open-create-community-btn" class="btn-primary mt-2 w-fit px-5">
+        + Criar comunidade
+      </button>
+
+      <!-- Lista de comunidades (menu esquerdo) -->
+      <div class="mt-6">
+        <p class="text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase mb-2">SEUS ESPAÇOS</p>
+        <nav id="sidebar-communities" class="space-y-1 text-sm">
+          <!-- preenchido via JS -->
+        </nav>
+      </div>
+    </aside>
+
+    <!-- COL 2 – Feed principal -->
+    <section class="col-span-12 md:col-span-6 bg-slate-950/60 border border-slate-800 rounded-3xl overflow-hidden shadow-xl shadow-black/40">
+
+      <!-- Cabeçalho do feed -->
+      <header class="px-4 sm:px-5 pt-3 pb-2 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h1 class="text-lg sm:text-xl font-semibold">Feed de Viagem</h1>
+          <p class="text-xs text-slate-400">
+            Compartilhe dúvidas, aprendizados e dicas com outros nômades.
+          </p>
+        </div>
+        <button id="logout-btn" class="text-xs text-slate-500 hover:text-rose-400">
+          Sair
+        </button>
+      </header>
+
+      <!-- Composer -->
+      <div class="flex items-start gap-3 p-4 sm:p-5 border-b border-slate-800">
+        <div id="composer-avatar" class="avatar-circle w-10 h-10 text-sm shrink-0">A</div>
+
+        <div class="flex-1 space-y-3">
+          <textarea
+            id="post-content"
+            rows="2"
+            class="w-full bg-slate-900/70 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-slate-500"
+            placeholder="Compartilhe uma dúvida, aprendizado ou dica de viagem..."
+          ></textarea>
+
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <!-- BLOCO NOVO: upload de imagem do post -->
+            <div class="flex items-center gap-3">
+              <label for="post-image" class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-sky-400 hover:text-sky-300 cursor-pointer">
+                <!-- ícone de imagem -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="9" cy="9" r="2.3"></circle>
+                  <path d="M21 15l-4.5-4.5c-.47-.47-1.23-.47-1.7 0L7 19"></path>
+                </svg>
+                <span>Imagem</span>
+              </label>
+              <input id="post-image" type="file" accept="image/*" class="hidden" />
+              <span id="post-image-name" class="text-[11px] text-slate-500 max-w-[140px] truncate"></span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <select
+                id="post-community"
+                class="bg-slate-900 border border-slate-700 text-xs sm:text-sm rounded-full px-3 py-1.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              >
+                <!-- options via JS -->
+              </select>
+              <button id="post-submit" class="btn-primary text-xs sm:text-sm px-4 py-1.5">
+                Publicar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEED -->
+      <div id="feed" class="divide-y divide-slate-900/80">
+        <div id="feed-status" class="text-center text-xs text-slate-500 py-4">
+          Carregando feed...
+        </div>
+        <!-- posts vão sendo inseridos aqui -->
+      </div>
+    </section>
+
+    <!-- COL 3 – Ranking / Sugestões -->
+    <aside class="hidden lg:flex lg:flex-col lg:col-span-3 gap-4">
+      <div class="bg-slate-950/70 border border-slate-800 rounded-3xl p-4">
+        <h2 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          Ranking de viajantes
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/40">
+            Beta
+          </span>
+        </h2>
+        <p class="text-xs text-slate-500 mb-3">
+          Quem mais participa da comunidade aparece aqui.
+        </p>
+        <ol id="ranking-list" class="space-y-2 text-sm">
+          <!-- preenchido via JS -->
+        </ol>
+      </div>
+
+      <div class="bg-slate-950/70 border border-slate-800 rounded-3xl p-4 text-xs text-slate-500">
+        <p class="font-semibold mb-1 text-slate-200">Dica:</p>
+        <p>
+          Quanto mais você compartilha dúvidas, aprendizados e relatos de viagem,
+          mais contexto teremos para sugerir conteúdos e grupos no futuro.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MODAL PERFIL -->
+  <div id="profile-modal" class="modal">
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 w-full max-w-md shadow-2xl shadow-black/40">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h2 class="text-lg font-semibold">Seu perfil</h2>
+          <p class="text-xs text-slate-500">
+            Nome e foto usados na comunidade.
+          </p>
+        </div>
+        <button id="close-profile-modal" class="text-slate-500 hover:text-slate-200 text-xl leading-none">
+          &times;
+        </button>
+      </div>
+
+      <form id="profile-form" class="space-y-4">
+        <div class="flex items-center gap-4">
+          <div id="profile-avatar-preview" class="avatar-circle w-12 h-12 text-base">A</div>
+          <div class="flex-1">
+            <label class="block text-xs text-slate-400 mb-1">Foto de perfil</label>
+            <!-- Upload de arquivo local -->
+            <input
+              type="file"
+              id="profile-avatar-file"
+              accept="image/*"
+              class="block w-full text-xs text-slate-300 border border-slate-700 rounded-md px-2.5 py-1.5 bg-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+            <p class="text-[11px] text-slate-500 mt-1">
+              Escolha uma imagem quadrada. Vamos armazenar com segurança no Supabase.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <label for="profile-name" class="block text-xs text-slate-400 mb-1">
+            Nome para mostrar
+          </label>
+          <input
+            id="profile-name"
+            type="text"
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="Como você quer aparecer para a comunidade?"
+          />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" id="cancel-profile-btn" class="text-xs text-slate-400 hover:text-slate-200">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary text-xs px-4">
+            Salvar perfil
+          </button>
+        </div>
+        <p id="profile-status" class="text-[11px] text-center text-slate-400 min-h-[1rem] mt-1"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CRIAR COMUNIDADE -->
+  <div id="create-community-modal" class="modal">
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 w-full max-w-md shadow-2xl shadow-black/40">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h2 class="text-lg font-semibold">Nova comunidade</h2>
+          <p class="text-xs text-slate-500">
+            Crie um espaço temático (ex: Nomades Europa, Mochileiros Ásia).
+          </p>
+        </div>
+        <button id="close-create-community-modal" class="text-slate-500 hover:text-slate-200 text-xl leading-none">
+          &times;
+        </button>
+      </div>
+
+      <form id="create-community-form" class="space-y-4">
+        <div>
+          <label for="community-name" class="block text-xs text-slate-400 mb-1">
+            Nome da comunidade
+          </label>
+          <input
+            id="community-name"
+            type="text"
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="Ex: Viajantes que trabalham remoto na Europa"
+            required
+          />
+        </div>
+        <div>
+          <label for="community-slug" class="block text-xs text-slate-400 mb-1">
+            Identificador (slug)
+          </label>
+          <input
+            id="community-slug"
+            type="text"
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="ex: nomades-europa"
+            required
+          />
+          <p class="text-[11px] text-slate-500 mt-1">
+            Use letras minúsculas, números e hífen. Isso será usado nos filtros.
+          </p>
+        </div>
+        <div>
+          <label for="community-desc" class="block text-xs text-slate-400 mb-1">
+            Descrição
+          </label>
+          <textarea
+            id="community-desc"
+            rows="3"
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="Explique o propósito e o tipo de conversa esperada."
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancel-community-btn" class="text-xs text-slate-400 hover:text-slate-200">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary text-xs px-4">
+            Criar comunidade
+          </button>
+        </div>
+        <p id="community-status" class="text-[11px] text-center text-slate-400 min-h-[1rem] mt-1"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS DA COMUNIDADE -->
+  <script>
+    // ========================
+    // Supabase Client
+    // ========================
+    const SUPABASE_URL = "https://rzgdbjdxvzksbbwjwunr.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Z2RiamR4dnprc2Jid2p3dW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzODAzMTEsImV4cCI6MjA3ODk1NjMxMX0.cslxIWp5V-FhufQUZyIGi-6xD4ZfBKJKqFRgwlSnDyM";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    // Buckets
+    const AVATAR_BUCKET = "comunidade_avatars";
+    const POST_IMAGE_BUCKET = "comunidade_posts";
+
+    // Tabelas
+    const TABLE_PROFILES = "comunidade_profiles";
+    const TABLE_POSTS = "comunidade_posts";
+    const TABLE_USAGE = "comunidade_usage";
+    const TABLE_COMMUNITIES = "comunidade_communities";
+
+    // ========================
+    // Estado simples em memória
+    // ========================
+    let currentUser = null; // auth user
+    let currentProfile = null;
+    let communities = [];
+    let selectedCommunitySlug = "feed-geral";
+
+    // ========================
+    // Util
+    // ========================
+    function slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .substring(0, 50);
+    }
+
+    function firstLetter(name) {
+      if (!name) return "A";
+      return name.trim().charAt(0).toUpperCase();
+    }
+
+    function setAvatar(el, url, name) {
+      if (!el) return;
+      el.innerHTML = ""; // limpa
+      if (url) {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = name || "Avatar";
+        img.className = "w-full h-full rounded-full object-cover";
+        el.appendChild(img);
+      } else {
+        el.textContent = firstLetter(name);
+      }
+    }
+
+    // ========================
+    // Referências de DOM
+    // ========================
+    const sidebarAvatar = document.getElementById("sidebar-avatar");
+    const sidebarName = document.getElementById("sidebar-name");
+    const composerAvatar = document.getElementById("composer-avatar");
+    const feedEl = document.getElementById("feed");
+    const feedStatus = document.getElementById("feed-status");
+    const rankingList = document.getElementById("ranking-list");
+    const sidebarCommunities = document.getElementById("sidebar-communities");
+
+    const postContentInput = document.getElementById("post-content");
+    const postCommunitySelect = document.getElementById("post-community");
+    const postSubmitBtn = document.getElementById("post-submit");
+    const postImageInput = document.getElementById("post-image");
+    const postImageName = document.getElementById("post-image-name");
+
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Profile modal
+    const profileModal = document.getElementById("profile-modal");
+    const openProfileBtn = document.getElementById("open-profile-btn");
+    const closeProfileModalBtn = document.getElementById("close-profile-modal");
+    const profileForm = document.getElementById("profile-form");
+    const profileNameInput = document.getElementById("profile-name");
+    const profileAvatarPreview = document.getElementById(
+      "profile-avatar-preview"
+    );
+    const profileAvatarFile = document.getElementById("profile-avatar-file");
+    const profileStatus = document.getElementById("profile-status");
+    const cancelProfileBtn = document.getElementById("cancel-profile-btn");
+
+    // Comunidade modal
+    const createCommunityModal = document.getElementById(
+      "create-community-modal"
+    );
+    const openCreateCommunityBtn = document.getElementById(
+      "open-create-community-btn"
+    );
+    const closeCreateCommunityModalBtn = document.getElementById(
+      "close-create-community-modal"
+    );
+    const createCommunityForm = document.getElementById(
+      "create-community-form"
+    );
+    const communityNameInput = document.getElementById("community-name");
+    const communitySlugInput = document.getElementById("community-slug");
+    const communityDescInput = document.getElementById("community-desc");
+    const communityStatus = document.getElementById("community-status");
+    const cancelCommunityBtn = document.getElementById("cancel-community-btn");
+
+    // ========================
+    // Autenticação básica
+    // (assume que o usuário já fez login no hub;
+    //  se não, mostramos alert simples)
+    // ========================
+    async function ensureUser() {
+      const { data, error } = await supabaseClient.auth.getUser();
+      if (error || !data.user) {
+        alert(
+          "Você precisa estar logado para usar a comunidade. Volte para a página inicial e faça login."
+        );
+        return null;
+      }
+      return data.user;
+    }
+
+    // ========================
+    // Perfil
+    // ========================
+    async function loadOrCreateProfile(user) {
+      const { data, error } = await supabaseClient
+        .from(TABLE_PROFILES)
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erro buscando profile:", error);
+      }
+
+      if (!data) {
+        // cria profile básico
+        const baseName = user.email?.split("@")[0] || "Viajante";
+        const { data: created, error: errInsert } = await supabaseClient
+          .from(TABLE_PROFILES)
+          .insert([{ user_id: user.id, display_name: baseName }])
+          .select()
+          .single();
+
+        if (errInsert) {
+          console.error("Erro criando profile:", errInsert);
+        }
+        currentProfile = created || { display_name: baseName };
+      } else {
+        currentProfile = data;
+      }
+
+      updateProfileUI();
+    }
+
+    function updateProfileUI() {
+      const name = currentProfile?.display_name || "Seu perfil";
+      const avatarUrl = currentProfile?.avatar_url || null;
+
+      sidebarName.textContent = name;
+      setAvatar(sidebarAvatar, avatarUrl, name);
+      setAvatar(composerAvatar, avatarUrl, name);
+      setAvatar(profileAvatarPreview, avatarUrl, name);
+      profileNameInput.value = name;
+    }
+
+    // Upload de avatar
+    async function uploadAvatar(file) {
+      if (!currentUser || !file) return null;
+
+      const ext = file.name.split(".").pop();
+      const path = `${currentUser.id}/avatar_${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from(AVATAR_BUCKET)
+        .upload(path, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error("Erro upload avatar:", uploadError);
+        throw uploadError;
+      }
+
+      const { data: publicData } = supabaseClient.storage
+        .from(AVATAR_BUCKET)
+        .getPublicUrl(path);
+
+      return publicData.publicUrl;
+    }
+
+    profileAvatarFile.addEventListener("change", () => {
+      const file = profileAvatarFile.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        profileAvatarPreview.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = ev.target.result;
+        img.className = "w-full h-full rounded-full object-cover";
+        profileAvatarPreview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    profileForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      profileStatus.textContent = "Salvando perfil...";
+      profileStatus.className = "text-[11px] text-slate-400 text-center";
+
+      let avatarUrl = currentProfile?.avatar_url || null;
+
+      const file = profileAvatarFile.files?.[0];
+      if (file) {
+        try {
+          avatarUrl = await uploadAvatar(file);
+        } catch {
+          profileStatus.textContent =
+            "Não foi possível enviar a imagem. Tente novamente.";
+          profileStatus.className = "text-[11px] text-rose-400 text-center";
+          return;
+        }
+      }
+
+      const displayName = profileNameInput.value.trim() || "Viajante";
+
+      const { data, error } = await supabaseClient
+        .from(TABLE_PROFILES)
+        .update({ display_name: displayName, avatar_url: avatarUrl })
+        .eq("user_id", currentUser.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Erro ao salvar perfil:", error);
+        profileStatus.textContent = "Erro ao salvar. Tente novamente.";
+        profileStatus.className = "text-[11px] text-rose-400 text-center";
+        return;
+      }
+
+      currentProfile = data;
+      updateProfileUI();
+      profileStatus.textContent = "Perfil atualizado!";
+      profileStatus.className = "text-[11px] text-emerald-400 text-center";
+      setTimeout(() => {
+        profileModal.classList.remove("open");
+      }, 700);
+    });
+
+    // ========================
+    // Comunidades
+    // ========================
+    async function ensureDefaultCommunities() {
+      // feed-geral sempre existe localmente (não precisa estar na tabela)
+      const base = [
+        {
+          id: "local-feed",
+          name: "Feed Geral",
+          slug: "feed-geral",
+        },
+      ];
+
+      const { data, error } = await supabaseClient
+        .from(TABLE_COMMUNITIES)
+        .select("id,name,slug")
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error("Erro buscando comunidades:", error);
+        communities = base;
+        renderCommunities();
+        return;
+      }
+
+      communities = base.concat(data || []);
+      renderCommunities();
+    }
+
+    function renderCommunities() {
+      // select do composer
+      postCommunitySelect.innerHTML = "";
+      communities.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c.slug;
+        opt.textContent =
+          c.slug === "feed-geral" ? "Postar no Feed Geral" : c.name;
+        postCommunitySelect.appendChild(opt);
+      });
+
+      // menu lateral
+      sidebarCommunities.innerHTML = "";
+      communities.forEach((c) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.dataset.slug = c.slug;
+        btn.className =
+          "w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm border border-transparent hover:bg-slate-900/80 hover:border-slate-700 transition";
+
+        if (c.slug === selectedCommunitySlug) {
+          btn.classList.add("bg-slate-900", "border-slate-700");
+        }
+
+        const left = document.createElement("span");
+        left.className = "flex items-center gap-2";
+        const dot = document.createElement("span");
+        dot.className =
+          "w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block";
+        left.appendChild(dot);
+        const label = document.createElement("span");
+        label.textContent = c.name;
+        left.appendChild(label);
+
+        const hashtag = document.createElement("span");
+        hashtag.className = "text-xs text-slate-500";
+        hashtag.textContent = c.slug === "feed-geral" ? "#geral" : "#" + c.slug;
+
+        btn.appendChild(left);
+        btn.appendChild(hashtag);
+
+        btn.addEventListener("click", () => {
+          selectedCommunitySlug = c.slug;
+          renderCommunities();
+          loadFeed();
+        });
+
+        sidebarCommunities.appendChild(btn);
+      });
+    }
+
+    createCommunityForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      communityStatus.textContent = "Criando comunidade...";
+      communityStatus.className = "text-[11px] text-slate-400 text-center";
+
+      const name = communityNameInput.value.trim();
+      let slug = communitySlugInput.value.trim().toLowerCase();
+      if (!slug) {
+        slug = slugify(name);
+      }
+
+      const desc = communityDescInput.value.trim();
+
+      const { data, error } = await supabaseClient
+        .from(TABLE_COMMUNITIES)
+        .insert([{ name, slug, description: desc, owner_id: currentUser.id }])
+        .select("id,name,slug")
+        .single();
+
+      if (error) {
+        console.error("Erro criando comunidade:", error);
+        communityStatus.textContent =
+          "Erro ao criar. Verifique se o slug já não existe.";
+        communityStatus.className = "text-[11px] text-rose-400 text-center";
+        return;
+      }
+
+      communities.push(data);
+      renderCommunities();
+      communityStatus.textContent = "Comunidade criada!";
+      communityStatus.className = "text-[11px] text-emerald-400 text-center";
+      setTimeout(() => {
+        createCommunityModal.classList.remove("open");
+        createCommunityForm.reset();
+      }, 700);
+    });
+
+    // ========================
+    // Feed
+    // ========================
+    postImageInput.addEventListener("change", () => {
+      const file = postImageInput.files?.[0];
+      if (file) {
+        postImageName.textContent = file.name;
+      } else {
+        postImageName.textContent = "";
+      }
+    });
+
+    async function uploadPostImage(file) {
+      if (!currentUser || !file) return null;
+      const ext = file.name.split(".").pop();
+      const path = `${currentUser.id}/post_${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2)}.${ext}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from(POST_IMAGE_BUCKET)
+        .upload(path, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Erro upload imagem do post:", uploadError);
+        throw uploadError;
+      }
+
+      const { data: publicData } = supabaseClient.storage
+        .from(POST_IMAGE_BUCKET)
+        .getPublicUrl(path);
+
+      return publicData.publicUrl;
+    }
+
+    async function handleNewPost() {
+      if (!currentUser) return;
+
+      const content = postContentInput.value.trim();
+      if (!content && !postImageInput.files?.[0]) return;
+
+      postSubmitBtn.disabled = true;
+      postSubmitBtn.textContent = "Publicando...";
+
+      let imageUrl = null;
+      const imageFile = postImageInput.files?.[0];
+
+      if (imageFile) {
+        try {
+          imageUrl = await uploadPostImage(imageFile);
+        } catch {
+          alert("Erro ao enviar a imagem. Tente novamente.");
+          postSubmitBtn.disabled = false;
+          postSubmitBtn.textContent = "Publicar";
+          return;
+        }
+      }
+
+      const communitySlug = postCommunitySelect.value || "feed-geral";
+
+      const { data, error } = await supabaseClient
+        .from(TABLE_POSTS)
+        .insert([
+          {
+            user_id: currentUser.id,
+            community_slug: communitySlug,
+            content,
+            image_url: imageUrl,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Erro ao publicar post:", error);
+        alert("Não foi possível publicar. Verifique as tabelas no Supabase.");
+        postSubmitBtn.disabled = false;
+        postSubmitBtn.textContent = "Publicar";
+        return;
+      }
+
+      // Atualiza contador de uso
+      await supabaseClient.rpc("increment_posts_count", {
+        user_id_input: currentUser.id,
+      }).catch((err) => console.warn("RPC não configurada:", err.message));
+
+      // reseta composer
+      postContentInput.value = "";
+      postImageInput.value = "";
+      postImageName.textContent = "";
+
+      postSubmitBtn.disabled = false;
+      postSubmitBtn.textContent = "Publicar";
+
+      // Insere no topo visualmente
+      prependPostToFeed({
+        ...data,
+        profile: currentProfile,
+      });
+    }
+
+    postSubmitBtn.addEventListener("click", handleNewPost);
+
+    function renderPost(post) {
+      const li = document.createElement("article");
+      li.className = "post-card px-4 sm:px-5 py-4 flex gap-3";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar-circle w-9 h-9 text-xs mt-1 shrink-0";
+      setAvatar(avatar, post.profile?.avatar_url, post.profile?.display_name);
+      li.appendChild(avatar);
+
+      const main = document.createElement("div");
+      main.className = "flex-1 space-y-1.5 text-sm";
+
+      const header = document.createElement("div");
+      header.className = "flex items-center gap-2";
+      const name = document.createElement("span");
+      name.className = "font-semibold text-slate-100";
+      name.textContent = post.profile?.display_name || "Viajante";
+      const communityTag = document.createElement("span");
+      communityTag.className =
+        "text-[11px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-400";
+      communityTag.textContent =
+        post.community_slug === "feed-geral"
+          ? "#geral"
+          : "#" + (post.community_slug || "comunidade");
+      const time = document.createElement("span");
+      time.className = "text-[11px] text-slate-500 ml-auto";
+      time.textContent = new Date(post.created_at || Date.now()).toLocaleString(
+        "pt-BR",
+        { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }
+      );
+      header.appendChild(name);
+      header.appendChild(communityTag);
+      header.appendChild(time);
+
+      const content = document.createElement("p");
+      content.className = "text-sm text-slate-100 whitespace-pre-wrap";
+      content.textContent = post.content || "";
+
+      main.appendChild(header);
+      if (post.content) {
+        main.appendChild(content);
+      }
+
+      // imagem do post
+      if (post.image_url) {
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "mt-2 rounded-2xl overflow-hidden border border-slate-800 bg-black/60";
+        const img = document.createElement("img");
+        img.src = post.image_url;
+        img.alt = "Imagem do post";
+        img.className = "w-full max-h-[420px] object-cover";
+        imgWrap.appendChild(img);
+        main.appendChild(imgWrap);
+      }
+
+      li.appendChild(main);
+      return li;
+    }
+
+    function prependPostToFeed(post) {
+      const postEl = renderPost(post);
+      const firstDivider = feedEl.querySelector("article");
+      if (firstDivider) {
+        feedEl.insertBefore(postEl, firstDivider);
+      } else {
+        // remove status se estiver
+        if (feedStatus) feedStatus.remove();
+        feedEl.appendChild(postEl);
+      }
+    }
+
+    async function loadFeed() {
+      if (!currentUser) return;
+      feedStatus.textContent = "Carregando feed...";
+      const query = supabaseClient
+        .from(TABLE_POSTS)
+        .select("*, profile:comunidade_profiles(*)")
+        .order("created_at", { ascending: false })
+        .limit(40);
+
+      if (selectedCommunitySlug !== "feed-geral") {
+        query.eq("community_slug", selectedCommunitySlug);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Erro ao carregar feed:", error);
+        feedStatus.textContent = "Erro ao carregar o feed.";
+        feedStatus.className = "text-center text-xs text-rose-400 py-4";
+        return;
+      }
+
+      feedEl.innerHTML = "";
+      if (!data || data.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "py-8 text-center text-xs text-slate-500";
+        empty.textContent =
+          "Ninguém postou nada aqui ainda. Seja a primeira pessoa a compartilhar algo.";
+        feedEl.appendChild(empty);
+        return;
+      }
+
+      data.forEach((post) => {
+        const postEl = renderPost(post);
+        feedEl.appendChild(postEl);
+      });
+    }
+
+    // ========================
+    // Ranking de uso
+    // ========================
+    async function loadRanking() {
+      const { data, error } = await supabaseClient
+        .from(TABLE_USAGE)
+        .select("*, profile:comunidade_profiles(display_name)")
+        .order("posts_count", { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error("Erro no ranking:", error);
+        rankingList.innerHTML =
+          '<li class="text-xs text-slate-500">Ranking ainda não disponível.</li>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        rankingList.innerHTML =
+          '<li class="text-xs text-slate-500">Ninguém no ranking ainda. Poste algo para aparecer aqui.</li>';
+        return;
+      }
+
+      rankingList.innerHTML = "";
+      data.forEach((row, idx) => {
+        const li = document.createElement("li");
+        li.className =
+          "flex items-center justify-between text-xs bg-slate-950/70 border border-slate-800 rounded-xl px-3 py-2";
+        const left = document.createElement("div");
+        left.className = "flex items-center gap-2";
+        const medal = document.createElement("span");
+        medal.className = "text-[11px]";
+        medal.textContent = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "⭐";
+        const name = document.createElement("span");
+        name.textContent = row.profile?.display_name || "Viajante";
+        left.appendChild(medal);
+        left.appendChild(name);
+        const count = document.createElement("span");
+        count.className = "text-[11px] text-slate-400";
+        count.textContent = `${row.posts_count || 0} posts`;
+        li.appendChild(left);
+        li.appendChild(count);
+        rankingList.appendChild(li);
+      });
+    }
+
+    // ========================
+    // Modais / eventos simples
+    // ========================
+    openProfileBtn.addEventListener("click", () =>
+      profileModal.classList.add("open")
+    );
+    closeProfileModalBtn.addEventListener("click", () =>
+      profileModal.classList.remove("open")
+    );
+    cancelProfileBtn.addEventListener("click", () =>
+      profileModal.classList.remove("open")
+    );
+
+    openCreateCommunityBtn.addEventListener("click", () =>
+      createCommunityModal.classList.add("open")
+    );
+    closeCreateCommunityModalBtn.addEventListener("click", () =>
+      createCommunityModal.classList.remove("open")
+    );
+    cancelCommunityBtn.addEventListener("click", () =>
+      createCommunityModal.classList.remove("open")
+    );
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "../index.html";
+    });
+
+    // ========================
+    // Inicialização
+    // ========================
+    (async function init() {
+      currentUser = await ensureUser();
+      if (!currentUser) return;
+
+      await loadOrCreateProfile(currentUser);
+      await ensureDefaultCommunities();
+      await loadFeed();
+      await loadRanking();
+    })();
+  </script>
+</body>
+</html>

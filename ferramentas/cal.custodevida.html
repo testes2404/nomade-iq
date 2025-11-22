@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora — Custo de Vida na Mala</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: #e5e7eb;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.8);
+      border-radius: 999px;
+    }
+
+    /* Ads slots – mais discretos e alinhados com UI */
+    .ads-slot {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px dashed rgba(148,163,184,0.35);
+      backdrop-filter: blur(8px);
+      border-radius: 0.75rem;
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      text-align: center;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ads-slot span {
+      opacity: 0.9;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    /* Grids para distribuir melhor os anúncios */
+    .ads-row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .ads-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .ads-row-2,
+      .ads-row-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <img src="../recursos/logo.png" alt="Nômade IQ" class="h-8 w-auto" />
+        <div class="leading-tight">
+          <p class="text-[11px] uppercase tracking-[0.28em] text-slate-400">
+            Calculadora
+          </p>
+          <h1 class="text-sm sm:text-base font-semibold text-slate-50">
+            Custo de Vida na Mala
+          </h1>
+        </div>
+      </div>
+
+      <a href="../index.html"
+         class="text-[11px] sm:text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800 transition">
+        Voltar
+      </a>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+      <!-- EXPLICAÇÃO -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <h2 class="text-lg sm:text-xl font-semibold text-slate-50 mb-2">
+          Quanto custa montar a mala certa para esse destino?
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mb-2">
+          Em vez de só falar “leve casacos e roupas leves”, a Nômade IQ estima o
+          <span class="font-semibold text-slate-200">custo real da mala</span>:
+          roupas, acessórios, higiene e itens específicos do destino.
+        </p>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Você informa <b>destino</b>, <b>tempo de viagem</b>, <b>padrão de consumo</b> e
+          <b>clima</b>. O Gemini sugere o que é essencial, calcula quantidades e
+          monta uma estimativa em moeda local e em reais.
+        </p>
+      </section>
+
+      <!-- FORMULÁRIO + ANÚNCIOS DISTRIBUÍDOS -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <h3 class="text-sm font-semibold text-slate-100 mb-3">
+          Parâmetros da sua viagem
+        </h3>
+
+        <form id="mala-form" class="space-y-6">
+
+          <!-- ETAPA 1 -->
+          <div class="space-y-3">
+            <p class="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+              Etapa 1 — Destino e duração
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label for="destino" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Destino
+                </label>
+                <input
+                  id="destino"
+                  type="text"
+                  placeholder="Ex: Lisboa, Toronto, Tóquio"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                  required
+                />
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label for="dias" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Duração (dias)
+                </label>
+                <input
+                  id="dias"
+                  type="number"
+                  min="1"
+                  max="365"
+                  placeholder="Ex: 7"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Ads 1-2: logo após a primeira etapa -->
+            <div class="ads-row-2 mt-2">
+              <div id="ads-slot-1" class="ads-slot">
+                <span>Espaço para anúncio #01</span>
+              </div>
+              <div id="ads-slot-2" class="ads-slot">
+                <span>Espaço para anúncio #02</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ETAPA 2 -->
+          <div class="space-y-3">
+            <p class="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+              Etapa 2 — Estilo de viagem
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label for="padrao" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Padrão de consumo
+                </label>
+                <select
+                  id="padrao"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                >
+                  <option value="essencial">Essencial (apenas o básico)</option>
+                  <option value="conforto" selected>Conforto (meio termo)</option>
+                  <option value="luxo">Luxo (itens premium / extras)</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label for="clima" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Clima predominante
+                </label>
+                <select
+                  id="clima"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                >
+                  <option value="calor">Calor</option>
+                  <option value="frio">Frio</option>
+                  <option value="ameno" selected>Ameno</option>
+                  <option value="misto">Misto (varia bastante)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Ads 3-4: após estilo/clima -->
+            <div class="ads-row-2 mt-2">
+              <div id="ads-slot-3" class="ads-slot">
+                <span>Espaço para anúncio #03</span>
+              </div>
+              <div id="ads-slot-4" class="ads-slot">
+                <span>Espaço para anúncio #04</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+              <div class="flex flex-col gap-1">
+                <label for="tipo_viagem" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Tipo de viagem
+                </label>
+                <select
+                  id="tipo_viagem"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+                >
+                  <option value="turismo" selected>Turismo</option>
+                  <option value="trabalho">Trabalho</option>
+                  <option value="intercambio">Intercâmbio / estudo</option>
+                  <option value="mochilao">Mochilão / low cost</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <span class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                  Itens básicos
+                </span>
+                <div class="flex items-center gap-3 mt-1">
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                    <input id="ja_tem_basicos" type="checkbox"
+                           class="h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500">
+                    <span>Já tenho roupas e higiene básica</span>
+                  </label>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">
+                  Se marcado, o Gemini considera só o que falta comprar (casacos, adaptadores, extras).
+                </p>
+              </div>
+            </div>
+
+            <!-- Ads 5-6: depois da parte de tipos -->
+            <div class="ads-row-2 mt-2">
+              <div id="ads-slot-5" class="ads-slot">
+                <span>Espaço para anúncio #05</span>
+              </div>
+              <div id="ads-slot-6" class="ads-slot">
+                <span>Espaço para anúncio #06</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ETAPA 3 -->
+          <div class="space-y-3">
+            <p class="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+              Etapa 3 — Moeda e ajustes
+            </p>
+
+            <div class="flex flex-col gap-1">
+              <label for="moeda" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
+                Moeda base da estimativa
+              </label>
+              <select
+                id="moeda"
+                class="w-full sm:max-w-xs rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500"
+              >
+                <option value="BRL" selected>Real (BRL)</option>
+                <option value="USD">Dólar (USD)</option>
+                <option value="EUR">Euro (EUR)</option>
+              </select>
+            </div>
+
+            <!-- Ads 7-9: grade suave abaixo da moeda -->
+            <div class="ads-row-3 mt-2">
+              <div id="ads-slot-7" class="ads-slot">
+                <span>Espaço para anúncio #07</span>
+              </div>
+              <div id="ads-slot-8" class="ads-slot">
+                <span>Espaço para anúncio #08</span>
+              </div>
+              <div id="ads-slot-9" class="ads-slot">
+                <span>Espaço para anúncio #09</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ads 10-11: faixa logo antes do botão final -->
+          <div class="ads-row-2 mt-1">
+            <div id="ads-slot-10" class="ads-slot">
+              <span>Espaço para anúncio #10</span>
+            </div>
+            <div id="ads-slot-11" class="ads-slot">
+              <span>Espaço para anúncio #11</span>
+            </div>
+          </div>
+
+          <!-- BOTÃO FINAL -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+            <button
+              type="submit"
+              id="btn-calcular"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition w-full sm:w-auto"
+            >
+              <span id="btn-calcular-label">Calcular custo da mala</span>
+              <svg id="btn-calcular-spinner" class="h-4 w-4 animate-spin hidden" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
+              </svg>
+            </button>
+
+            <p id="status-msg" class="text-[11px] sm:text-xs text-slate-400 min-h-[1.25rem]">
+              Defina os parâmetros da viagem e clique em “Calcular”.
+            </p>
+          </div>
+
+          <!-- Ads 12-13-14-15: pós-botão, ainda na área de preenchimento -->
+          <div class="space-y-2 pt-1">
+            <div class="ads-row-2">
+              <div id="ads-slot-12" class="ads-slot">
+                <span>Espaço para anúncio #12</span>
+              </div>
+              <div id="ads-slot-13" class="ads-slot">
+                <span>Espaço para anúncio #13</span>
+              </div>
+            </div>
+            <div class="ads-row-2">
+              <div id="ads-slot-14" class="ads-slot">
+                <span>Espaço para anúncio #14</span>
+              </div>
+              <div id="ads-slot-15" class="ads-slot">
+                <span>Espaço para anúncio #15</span>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- RESULTADOS -->
+      <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100">
+              Resultado — Itens da mala e estimativa de custo
+            </h3>
+            <p class="text-[11px] text-slate-500">
+              Valores aproximados. Use como base para planejamento, não como orçamento final.
+            </p>
+          </div>
+        </div>
+
+        <!-- Resumo -->
+        <div id="resumo-container" class="mb-4 hidden">
+          <p id="resumo-texto" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+        </div>
+
+        <!-- Totais -->
+        <div id="totais-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 hidden">
+          <div class="rounded-xl bg-slate-900/70 border border-emerald-500/40 px-3 py-3">
+            <p class="text-[11px] text-slate-400">Total estimado na moeda base</p>
+            <p id="total-moeda-base" class="text-sm sm:text-lg font-semibold text-emerald-300">–</p>
+          </div>
+          <div class="rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-3">
+            <p class="text-[11px] text-slate-400">Total aproximado em reais</p>
+            <p id="total-brl" class="text-sm sm:text-lg font-semibold text-slate-100">–</p>
+            <p class="text-[10px] text-slate-500 mt-1">
+              Conversão aproximada; considere a cotação do dia.
+            </p>
+          </div>
+        </div>
+
+        <!-- Lista de itens -->
+        <div id="lista-itens" class="thin-scrollbar max-h-[380px] overflow-y-auto space-y-2 text-xs sm:text-sm">
+          <p class="text-[11px] text-slate-500">
+            Ainda não há nenhuma simulação. Preencha os dados da viagem e calcule para ver os itens da mala sugeridos pelo Gemini.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- SCRIPT -->
+  <script>
+    const formMala = document.getElementById("mala-form");
+    const destinoInput = document.getElementById("destino");
+    const diasInput = document.getElementById("dias");
+    const padraoSelect = document.getElementById("padrao");
+    const climaSelect = document.getElementById("clima");
+    const tipoViagemSelect = document.getElementById("tipo_viagem");
+    const jaTemBasicosInput = document.getElementById("ja_tem_basicos");
+    const moedaSelect = document.getElementById("moeda");
+
+    const btnCalcular = document.getElementById("btn-calcular");
+    const btnCalcularLabel = document.getElementById("btn-calcular-label");
+    const btnCalcularSpinner = document.getElementById("btn-calcular-spinner");
+    const statusMsg = document.getElementById("status-msg");
+
+    const listaItens = document.getElementById("lista-itens");
+    const resumoContainer = document.getElementById("resumo-container");
+    const resumoTexto = document.getElementById("resumo-texto");
+    const totaisContainer = document.getElementById("totais-container");
+    const totalMoedaBaseEl = document.getElementById("total-moeda-base");
+    const totalBrLEl = document.getElementById("total-brl");
+
+    // Endpoint da sua API com Gemini
+    const API_URL = "http://localhost:8000/api/mala-custo"; // ajuste para sua rota real
+
+    function setLoading(isLoading) {
+      btnCalcular.disabled = isLoading;
+      btnCalcularSpinner.classList.toggle("hidden", !isLoading);
+      btnCalcularLabel.textContent = isLoading ? "Calculando..." : "Calcular custo da mala";
+    }
+
+    function setStatus(message, type = "info") {
+      statusMsg.textContent = message || "";
+      statusMsg.classList.remove("text-slate-400", "text-emerald-400", "text-rose-400");
+      if (!message) return;
+      if (type === "success") statusMsg.classList.add("text-emerald-400");
+      else if (type === "error") statusMsg.classList.add("text-rose-400");
+      else statusMsg.classList.add("text-slate-400");
+    }
+
+    function limparResultados() {
+      listaItens.innerHTML = "";
+      resumoContainer.classList.add("hidden");
+      totaisContainer.classList.add("hidden");
+      totalMoedaBaseEl.textContent = "–";
+      totalBrLEl.textContent = "–";
+    }
+
+    function renderResultados(payload) {
+      limparResultados();
+
+      const itens = payload.itens || [];
+      const resumo = payload.resumo_texto || payload.resumo || "";
+      const totalMoedaBase = payload.total_moeda_base || payload.total || null;
+      const totalBRL = payload.total_brl || payload.total_reais || null;
+
+      if (resumo) {
+        resumoTexto.textContent = resumo;
+        resumoContainer.classList.remove("hidden");
+      }
+
+      if (totalMoedaBase || totalBRL) {
+        if (totalMoedaBase) {
+          totalMoedaBaseEl.textContent = totalMoedaBase;
+        }
+        if (totalBRL) {
+          totalBrLEl.textContent = totalBRL;
+        }
+        totaisContainer.classList.remove("hidden");
+      }
+
+      if (!itens.length) {
+        const p = document.createElement("p");
+        p.className = "text-[11px] text-slate-500";
+        p.textContent = "Nenhum item detalhado retornado. Use o resumo como guia geral de compras.";
+        listaItens.appendChild(p);
+        return;
+      }
+
+      itens.forEach((item) => {
+        const card = document.createElement("div");
+        card.className =
+          "flex items-start justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2.5";
+
+        const left = document.createElement("div");
+        left.className = "flex-1 min-w-0";
+
+        const nome = document.createElement("p");
+        nome.className = "text-xs sm:text-sm font-semibold text-slate-50";
+        nome.textContent = item.nome || item.item || "Item";
+
+        const detalhes = document.createElement("p");
+        detalhes.className = "text-[11px] text-slate-400 mt-0.5";
+        const partes = [];
+
+        if (item.categoria) partes.push(item.categoria);
+        if (item.contexto) partes.push(item.contexto);
+        if (item.obs) partes.push(item.obs);
+
+        detalhes.textContent = partes.join(" · ");
+        left.appendChild(nome);
+        if (partes.length) left.appendChild(detalhes);
+
+        const right = document.createElement("div");
+        right.className = "text-right shrink-0";
+
+        const qtd = document.createElement("p");
+        qtd.className = "text-[11px] text-slate-300";
+        if (item.qtd || item.quantidade) {
+          qtd.textContent = `Qtd: ${item.qtd || item.quantidade}`;
+          right.appendChild(qtd);
+        }
+
+        if (item.custo_unitario || item.preco_unitario || item.custo_estimado) {
+          const custoUnit = document.createElement("p");
+          custoUnit.className = "text-[11px] text-slate-400";
+          custoUnit.textContent =
+            item.custo_unitario ||
+            item.preco_unitario ||
+            item.custo_estimado;
+          right.appendChild(custoUnit);
+        }
+
+        if (item.custo_total || item.total_item) {
+          const custoTotal = document.createElement("p");
+          custoTotal.className = "text-[11px] font-semibold text-emerald-300 mt-0.5";
+          custoTotal.textContent = item.custo_total || item.total_item;
+          right.appendChild(custoTotal);
+        }
+
+        card.appendChild(left);
+        card.appendChild(right);
+        listaItens.appendChild(card);
+      });
+    }
+
+    // fallback simples se a API falhar (modo offline)
+    function gerarMock(destino, dias, padrao, clima, tipo, moeda) {
+      const base = moeda || "BRL";
+      const fatorPadrao = padrao === "luxo" ? 1.8 : padrao === "conforto" ? 1.3 : 1;
+      const fatorDias = Math.min(Math.max(dias / 7, 0.5), 3);
+
+      const totalEstimado = 800 * fatorPadrao * fatorDias;
+      const totalMoedaBase =
+        base === "USD"
+          ? `US$ ${Math.round(totalEstimado / 5).toLocaleString("pt-BR")}`
+          : base === "EUR"
+          ? `€ ${Math.round(totalEstimado / 5.5).toLocaleString("pt-BR")}`
+          : `R$ ${Math.round(totalEstimado).toLocaleString("pt-BR")}`;
+
+      const totalBRL =
+        base === "USD"
+          ? `R$ ${Math.round(totalEstimado).toLocaleString("pt-BR")} (aprox.)`
+          : base === "EUR"
+          ? `R$ ${Math.round(totalEstimado).toLocaleString("pt-BR")} (aprox.)`
+          : totalMoedaBase;
+
+      return {
+        resumo_texto: `Estimativa offline para uma viagem de ${dias} dia(s) para ${destino}, com padrão ${padrao} e clima ${clima}. Use apenas como referência rápida enquanto a IA não responde.`,
+        total_moeda_base: totalMoedaBase,
+        total_brl: totalBRL,
+        itens: [
+          {
+            nome: "Roupas principais",
+            categoria: "Vestuário",
+            qtd: tipo === "mochilao" ? 5 : 8,
+            custo_total: base === "BRL" ? "R$ 600 (aprox.)" : totalMoedaBase,
+          },
+          {
+            nome: "Kit higiene e farmácia básica",
+            categoria: "Higiene / saúde",
+            qtd: 1,
+            custo_total: base === "BRL" ? "R$ 150 (aprox.)" : "",
+          },
+          {
+            nome: "Itens específicos de clima",
+            categoria: "Casacos, segunda pele, protetor solar etc.",
+            qtd: 1,
+            custo_total: base === "BRL" ? "R$ 250 (aprox.)" : "",
+          },
+        ],
+      };
+    }
+
+    formMala.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const destino = destinoInput.value.trim();
+      const dias = Number(diasInput.value);
+      const padrao = padraoSelect.value;
+      const clima = climaSelect.value;
+      const tipo_viagem = tipoViagemSelect.value;
+      const ja_tem_basicos = jaTemBasicosInput.checked;
+      const moeda = moedaSelect.value;
+
+      if (!destino || !dias || dias <= 0) {
+        setStatus("Informe o destino e a duração da viagem.", "error");
+        return;
+      }
+
+      setLoading(true);
+      setStatus("Consultando IA para montar a mala ideal...", "info");
+      limparResultados();
+
+      try {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            destino,
+            dias,
+            padrao,
+            clima,
+            tipo_viagem,
+            ja_tem_basicos,
+            moeda,
+          }),
+        });
+
+        if (!resp.ok) {
+          throw new Error("Erro ao consultar a API de mala.");
+        }
+
+        const data = await resp.json();
+        renderResultados(data);
+        setStatus("Simulação concluída com sucesso.", "success");
+      } catch (err) {
+        console.error(err);
+        const mock = gerarMock(destino, dias, padrao, clima, tipo_viagem, moeda);
+        renderResultados(mock);
+        setStatus("API indisponível. Usando estimativa offline aproximada.", "info");
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trilha — Comissário de Voo</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+    <!-- Estilo do HUB -->
+    <link rel="stylesheet" href="../css/hub.css" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e5e7eb;
+        }
+
+        /* Vídeo de fundo */
+        #bg-video {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.35);
+        }
+
+        /* Banner */
+        .ads-banner {
+            background: rgba(15, 23, 42, 0.90);
+            border: 1px solid rgba(148,163,184,0.35);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+        }
+
+        /* Aba */
+        .tab-btn {
+            background: rgba(15,23,42,0.82);
+            border: 1px solid rgba(148,163,184,0.25);
+            padding: 8px 16px;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #cbd5e1;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            color: white;
+        }
+
+        /* Esconder barra de rolagem horizontal do menu no mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Vídeo de fundo -->
+    <video id="bg-video" autoplay muted loop playsinline>
+        <source src="../recursos/hub.mp4" type="video/mp4" />
+    </video>
+
+    <!-- HEADER SUPERIOR -->
+    <header class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            
+            <!-- Logo + texto -->
+            <div class="flex items-center gap-3">
+                <img src="../recursos/logo.png" class="h-10 w-auto" />
+                <div>
+                    <p class="text-xs uppercase tracking-widest text-indigo-400">Trilha Especial</p>
+                    <p class="font-semibold text-gray-100">Comissário de Voo</p>
+                </div>
+            </div>
+
+            <!-- Usuário -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs text-gray-400">Conectado como</p>
+                    <p id="user-label" class="text-sm font-medium text-gray-100">…</p>
+                </div>
+
+                <div class="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold">
+                    <span id="user-avatar-letter">A</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- SE NÃO ESTIVER LOGADO -->
+    <section id="lock-message" class="max-w-xl mx-auto mt-12 px-6 py-8 text-center hidden">
+        <h2 class="text-xl font-semibold text-red-400 mb-3">Acesso restrito</h2>
+        <p class="text-sm text-gray-300 mb-6">
+            Faça login para visualizar esta trilha exclusiva.
+        </p>
+        <a href="../index.html"
+           class="px-6 py-3 bg-indigo-600 rounded-full font-semibold text-white">
+            Voltar ao início
+        </a>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main id="main-content" class="max-w-6xl mx-auto px-4 py-10 hidden">
+
+        <!-- Banner superior -->
+        <div class="ads-banner px-4 py-4 mb-8">
+            <p class="text-[10px] text-gray-500 mb-1">Banner superior — espaço para anúncio</p>
+            <div class="h-16 flex items-center justify-center text-gray-300 text-sm">
+                Anúncio Aqui — Faixa superior
+            </div>
+        </div>
+
+        <!-- MENU DE MOMENTOS (faixa como na imagem) -->
+        <div class="ads-banner px-4 py-3 mb-6">
+            <!-- linha onde ficam as abas -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                <button class="tab-btn active" data-target="momento-1">
+                    O que saber antes de qualquer coisa?
+                </button>
+                <button class="tab-btn" data-target="momento-2">
+                    O que estudar para a certificação?
+                </button>
+                <button class="tab-btn" data-target="momento-3">
+                    O que saber depois da certificação?
+                </button>
+                <button class="tab-btn" data-target="momento-4">
+                    Como passar na entrevista?
+                </button>
+            </div>
+        </div>
+
+        <!-- ÁREA DE CONTEÚDO QUE MUDA CONFORME O MENU -->
+        <section id="content-area" class="bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-6 mb-6">
+            <!-- Momento 1 -->
+            <div id="momento-1" class="moment-content">
+                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-1">
+                    O que saber antes de qualquer coisa?
+                </h2>
+                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-1">
+                    Aqui você pode colocar o conteúdo introdutório: visão geral da profissão,
+                    rotina de comissário, mitos e verdades, pré-requisitos básicos, saúde,
+                    idiomas, como funciona o mercado e o que já dá para ir se preparando hoje.
+                </p>
+            </div>
+
+            <!-- Momento 2 -->
+            <div id="momento-2" class="moment-content hidden">
+                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-2">
+                    O que estudar para a certificação?
+                </h2>
+                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-2">
+                    Nesta aba entram os temas da prova da ANAC, material de estudo recomendado,
+                    simulados, tempo de preparação, como organizar o cronograma e dicas práticas
+                    para memorizar normas e procedimentos.
+                </p>
+            </div>
+
+            <!-- Momento 3 -->
+            <div id="momento-3" class="moment-content hidden">
+                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-3">
+                    O que saber depois da certificação?
+                </h2>
+                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-3">
+                    Aqui você fala sobre o que acontece depois da aprovação: como usar o CHT,
+                    como montar currículo, onde buscar oportunidades, processos internos das
+                    cias aéreas e o que esperar dos primeiros meses na profissão.
+                </p>
+            </div>
+
+            <!-- Momento 4 -->
+            <div id="momento-4" class="moment-content hidden">
+                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-4">
+                    Como passar na entrevista?
+                </h2>
+                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-4">
+                    Nesta aba você detalha o passo a passo da entrevista, dinâmica de grupo,
+                    como se apresentar, postura, comunicação, aparência, inglês na seleção e
+                    respostas estratégicas para as perguntas mais comuns.
+                </p>
+            </div>
+        </section>
+
+        <!-- Banner inferior -->
+        <div class="ads-banner px-4 py-4 mt-2">
+            <p class="text-[10px] text-gray-500 mb-1">Banner inferior — espaço para anúncio</p>
+            <div class="h-16 flex items-center justify-center text-gray-300 text-sm">
+                Anúncio Aqui — Faixa inferior
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT SUPABASE + TABS -->
+    <script>
+        // ====== SUPABASE CLIENT ======
+        const supabaseClient = window.supabase.createClient(
+            "https://rzgdbjdxvzksbbwjwunr.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Z2RiamR4dnprc2Jid2p3dW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzODAzMTEsImV4cCI6MjA3ODk1NjMxMX0.cslxIWp5V-FhufQUZyIGi-6xD4ZfBKJKqFRgwlSnDyM"
+        );
+
+        // nome da tabela onde o painel de gestão salva o conteúdo do botão
+        // "Redação conteúdo comissário"
+        const TABELA_COMISSARIO = "conteudo_comissario"; // ajuste se você usou outro nome
+
+        const lockMessage = document.getElementById("lock-message");
+        const mainContent = document.getElementById("main-content");
+        const userLabel = document.getElementById("user-label");
+        const avatarLetter = document.getElementById("user-avatar-letter");
+
+        // ====== CARREGAR CONTEÚDOS DA TABELA ======
+        async function carregarConteudosComissario() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from(TABELA_COMISSARIO)
+                    .select("id, menu_id, momento, titulo, conteudo, updated_at")
+                    .order("updated_at", { ascending: false });
+
+                if (error) {
+                    console.error("Erro ao carregar conteúdos do comissário:", error);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    // sem registros -> fica o texto padrão
+                    return;
+                }
+
+                // pega sempre o registro mais recente por menu (momento_1, momento_2, etc.)
+                const latestByMenu = {};
+                data.forEach((row) => {
+                    const key = row.menu_id || row.momento || row.menu; // tenta achar o campo que você usou
+                    if (!key) return;
+                    if (!latestByMenu[key]) {
+                        latestByMenu[key] = row;
+                    }
+                });
+
+                function aplicarConteudo(momentoId, menuKey, fallbackTitulo, fallbackTexto) {
+                    const row = latestByMenu[menuKey];
+                    const tituloEl = document.getElementById(`titulo-${momentoId}`);
+                    const textoEl = document.getElementById(`texto-${momentoId}`);
+                    if (!tituloEl || !textoEl) return;
+
+                    if (!row) {
+                        // se não tiver conteúdo para esse menu, mantém texto padrão
+                        tituloEl.textContent = fallbackTitulo;
+                        textoEl.textContent = fallbackTexto;
+                    } else {
+                        tituloEl.textContent = row.titulo || fallbackTitulo;
+                        // se quiser permitir HTML, troque por innerHTML
+                        textoEl.textContent = row.conteudo || fallbackTexto;
+                    }
+                }
+
+                aplicarConteudo(
+                    "momento-1",
+                    "momento_1",
+                    "O que saber antes de qualquer coisa?",
+                    "Aqui você pode colocar o conteúdo introdutório: visão geral da profissão, rotina de comissário, mitos e verdades, pré-requisitos básicos, saúde, idiomas, como funciona o mercado e o que já dá para ir se preparando hoje."
+                );
+
+                aplicarConteudo(
+                    "momento-2",
+                    "momento_2",
+                    "O que estudar para a certificação?",
+                    "Nesta aba entram os temas da prova da ANAC, material de estudo recomendado, simulados, tempo de preparação, como organizar o cronograma e dicas práticas para memorizar normas e procedimentos."
+                );
+
+                aplicarConteudo(
+                    "momento-3",
+                    "momento_3",
+                    "O que saber depois da certificação?",
+                    "Aqui você fala sobre o que acontece depois da aprovação: como usar o CHT, como montar currículo, onde buscar oportunidades, processos internos das cias aéreas e o que esperar dos primeiros meses na profissão."
+                );
+
+                aplicarConteudo(
+                    "momento-4",
+                    "momento_4",
+                    "Como passar na entrevista?",
+                    "Nesta aba você detalha o passo a passo da entrevista, dinâmica de grupo, como se apresentar, postura, comunicação, aparência, inglês na seleção e respostas estratégicas para as perguntas mais comuns."
+                );
+            } catch (e) {
+                console.error("Erro inesperado ao carregar conteúdos:", e);
+            }
+        }
+
+        // ====== PROTEÇÃO DE ROTA ======
+        async function proteger() {
+            const { data } = await supabaseClient.auth.getSession();
+
+            if (!data || !data.session) {
+                lockMessage.classList.remove("hidden");
+                mainContent.classList.add("hidden");
+                return;
+            }
+
+            const user = data.session.user;
+            const name = user.user_metadata?.nome || user.email.split("@")[0];
+            userLabel.textContent = name;
+            avatarLetter.textContent = name[0].toUpperCase();
+
+            lockMessage.classList.add("hidden");
+            mainContent.classList.remove("hidden");
+
+            // depois de liberar o acesso, carrega os textos da trilha
+            carregarConteudosComissario();
+        }
+
+        proteger();
+
+        // ----- LÓGICA DAS ABAS -----
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const contents = document.querySelectorAll(".moment-content");
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.getAttribute("data-target");
+
+                // ativa/desativa botões
+                tabButtons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                // mostra/oculta conteúdos
+                contents.forEach(section => {
+                    if (section.id === targetId) {
+                        section.classList.remove("hidden");
+                    } else {
+                        section.classList.add("hidden");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

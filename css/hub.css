@@ -1,0 +1,280 @@
+/* Fundo geral e fonte */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #000000; /* Preto absoluto */
+    position: relative;        /* para organização do overlay */
+}
+
+/* Vídeo de fundo ocupando toda a tela */
+#bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;              /* fica atrás do overlay e do conteúdo */
+    filter: brightness(1);    /* vídeo normal; quem escurece é o overlay abaixo */
+}
+
+/* OVERLAY de transparência/escurecimento sobre o vídeo
+   → ajuste o último número (0.0 a 1.0) para mais/menos transparência
+   ex: 0.30 = bem escuro | 0.55 = meio termo | 0.8 = bem claro */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25); /* ⇦ controle REAL de transparência */
+    z-index: -1;
+    pointer-events: none; /* não atrapalha cliques */
+}
+
+/* Modal genérico */
+.modal {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    margin: auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   NAV DAS CALCULADORAS
+   ========================= */
+
+.calc-nav-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden; /* evita estouro visual; mobile sobrescreve */
+}
+
+.calc-nav {
+    position: relative;
+    --count: 4; /* 1 botão principal + 3 calculadoras extras (a quarta entra no repeat) */
+}
+
+.calc-nav-list {
+    padding: 0;
+    margin: 0;
+    display: inline-grid;
+    grid-auto-flow: column;
+    list-style-type: none;
+    /* primeiro item (principal) + 3 colunas expansíveis */
+    grid-template-columns: auto repeat(3, calc((var(--active, 0) * 170px) + 16px));
+    column-gap: 0.4rem;
+    transition: grid-template-columns 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.calc-nav-list li {
+    display: grid;
+    justify-content: end;
+    z-index: calc(var(--count) - var(--index));
+}
+
+.calc-nav a,
+.calc-nav button {
+    border: none;
+    cursor: pointer;
+    background: rgba(79, 70, 229, 0.16); /* Indigo transparente */
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    margin: 0;
+    color: #E5E7EB;
+    font-size: 0.8rem;
+    font-weight: 500;
+    backdrop-filter: blur(24px);
+    transition: color 0.2s, background 0.2s, transform 0.2s;
+    white-space: nowrap;
+}
+
+.calc-nav a:hover,
+.calc-nav button:hover,
+.calc-nav a:focus-visible,
+.calc-nav button:focus-visible {
+    background: #6366F1;
+    color: white;
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.calc-nav a:visited {
+    color: #E5E7EB;
+}
+
+.calc-nav svg {
+    height: 18px;
+    width: 18px;
+    fill: currentColor;
+}
+
+.calc-nav span {
+    display: grid;
+    align-items: center;
+    grid-auto-flow: column;
+    grid-template-columns: 18px 1fr;
+    gap: 0.25rem;
+}
+
+/* Itens 2,3,4 começam “fechados” (texto some) e abrem com hover/click */
+.calc-nav-list li:nth-of-type(n+2) span {
+    opacity: var(--active, 0);
+    transition: opacity 0.25s ease-out;
+}
+
+/* Quando hover/focus ou classe .open estiver ativa, expande */
+.calc-nav:hover .calc-nav-list,
+.calc-nav:focus-within .calc-nav-list,
+.calc-nav.open .calc-nav-list {
+    --active: 1;
+}
+
+/* Em telas bem pequenas, deixa um pouco mais compacto */
+@media (max-width: 480px) {
+    .calc-nav-list {
+        grid-template-columns: auto repeat(3, calc((var(--active, 0) * 140px) + 14px));
+    }
+    .calc-nav a,
+    .calc-nav button {
+        font-size: 0.75rem;
+        padding: 0.45rem 0.75rem;
+    }
+}
+
+/* MOBILE: MENU COM SCROLL LATERAL */
+@media (max-width: 640px) {
+    .calc-nav-wrapper {
+        justify-content: flex-start;
+        overflow-x: auto;                 /* permite rolar horizontalmente */
+        -webkit-overflow-scrolling: touch;
+        padding-inline: 0.75rem;
+    }
+
+    .calc-nav {
+        min-width: max-content;           /* largura baseada no conteúdo */
+    }
+}
+
+/* Banner fino fixo no rodapé */
+#footer-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;                 /* fininho */
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid #1f2937;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#footer-banner p {
+    margin: 0;
+    font-size: 12px;
+    color: #9ca3af;               /* cinza claro */
+}
+
+/* =========================
+   BOTÕES 3D ESPECIAIS
+   (Salários Reais / Comissário)
+   ========================= */
+
+.cube-btn {
+    position: relative;
+    width: 200px;
+    height: 56px;
+    transition: 4s;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(0deg);
+}
+
+.cube-btn:hover {
+    transform: perspective(1000px) rotateX(360deg);
+}
+
+.cube-btn span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    background: rgba(255, 255, 255, 0.9);
+    font-family: sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 2px;
+    transition: 0.5s;
+    border: 2px solid #000;
+    box-sizing: border-box;
+    box-shadow: inset 0 20px 50px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding-inline: 0.5rem;
+}
+
+.cube-btn:hover span {
+    color: #fff;
+    background: rgba(249, 115, 22, 0.8); /* laranja no hover */
+    border-color: #f97316;
+}
+
+.cube-btn span:nth-child(1) {
+    transform: rotateX(360deg) translateZ(25px);
+}
+.cube-btn span:nth-child(2) {
+    transform: rotateX(270deg) translateZ(25px);
+}
+.cube-btn span:nth-child(3) {
+    transform: rotateX(180deg) translateZ(25px);
+}
+.cube-btn span:nth-child(4) {
+    transform: rotateX(90deg) translateZ(25px);
+}

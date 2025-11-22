@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custo de Vida – Exterior x Brasil</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #000000;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .sticky-col {
+      position: sticky;
+      top: 10px;
+    }
+
+    .banner-top {
+      position: relative;
+      z-index: 50;
+    }
+
+    .banner-bottom-fixed {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+
+    .ad-slot {
+      border-radius: 0.75rem;
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-size: 0.7rem;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .ad-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      color: #9ca3af;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen pb-24">
+
+  <!-- 🔹 BANNER FINO SUPERIOR -->
+  <div class="w-full banner-top px-3 pt-3">
+    <p class="ad-label">Top Banner</p>
+    <div class="ad-slot h-10">
+      <span>320 x 50 • Google AdSense</span>
+    </div>
+  </div>
+
+  <!-- 🔹 LAYOUT 2 COLUNAS (desktop) / 1 COLUNA (mobile) -->
+  <div class="w-full max-w-6xl mx-auto mt-4 grid grid-cols-1 md:grid-cols-3 gap-6 px-3">
+
+    <!-- ============================ -->
+    <!-- 🔸 COLUNA ESQUERDA = CALCULADORA -->
+    <!-- ============================ -->
+    <div class="md:col-span-2 space-y-8">
+
+      <!-- ETAPA 1 -->
+      <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md">
+        <h1 class="text-xl font-bold text-slate-900 mb-2">
+          Custo de Vida – Exterior x Brasil
+        </h1>
+
+        <p class="text-xs text-slate-600 mb-4 max-w-md">
+          Mesma funcionalidade da sua calculadora, agora distribuída em etapas 
+          para otimizar banners e scroll igual ao site da Thor.
+        </p>
+
+        <h2 class="text-sm font-semibold text-slate-900 mb-1">Etapa 1: Informações básicas</h2>
+        <p class="text-[11px] text-slate-500 mb-4">
+          Use linguagem natural: “Lisboa 2026”, “Toronto inverno 2025”.
+        </p>
+
+        <!-- FORM -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs mb-1 font-medium">Cidade / País</label>
+            <input id="destino" class="w-full rounded-xl border px-3 py-2" placeholder="Ex: Lisboa, Portugal" />
+          </div>
+
+          <div>
+            <label class="block text-xs mb-1 font-medium">Quando você vai?</label>
+            <input id="mes" class="w-full rounded-xl border px-3 py-2" placeholder="Ex: Janeiro 2026" />
+          </div>
+        </div>
+
+        <!-- Banner dentro da etapa -->
+        <div class="mt-5">
+          <p class="ad-label">In-Form Banner</p>
+          <div class="ad-slot h-14">300 x 100 • Cartão global</div>
+        </div>
+      </section>
+
+      <!-- ETAPA 2 -->
+      <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md">
+        <h2 class="text-sm font-semibold mb-1">Etapa 2: Estilo de vida</h2>
+        <p class="text-[11px] text-slate-500 mb-3">Ajuda a IA entender sua faixa de consumo.</p>
+
+        <div class="space-y-3">
+          <select class="w-full border rounded-xl px-3 py-2">
+            <option>Padrão básico</option>
+            <option>Padrão moderado</option>
+            <option>Padrão elevado</option>
+          </select>
+        </div>
+
+        <!-- Banner -->
+        <div class="mt-4">
+          <p class="ad-label">Banner Etapa 2</p>
+          <div class="ad-slot h-20">Seguro Saúde Internacional</div>
+        </div>
+      </section>
+
+      <!-- ETAPA 3 -->
+      <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md">
+        <h2 class="text-sm font-semibold mb-1">Etapa 3: Preferências</h2>
+        <p class="text-[11px] text-slate-500 mb-3">Somente estético, mas ajuda a alongar o fluxo.</p>
+
+        <div class="space-y-3">
+          <select class="w-full border rounded-xl px-3 py-2">
+            <option>Morar sozinho</option>
+            <option>Morar com parceiro(a)</option>
+            <option>Morar com família</option>
+          </select>
+        </div>
+
+        <div class="mt-4">
+          <p class="ad-label">Banner Etapa 3</p>
+          <div class="ad-slot h-20">Consultoria de visto / mudança</div>
+        </div>
+      </section>
+
+      <!-- ETAPA FINAL - BOTÃO CALCULAR -->
+      <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md">
+        <h2 class="text-sm font-semibold mb-3">Finalizar – Calcular custo total</h2>
+
+        <button
+          onclick="calcular()"
+          id="btn-calcular"
+          class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold shadow-lg"
+        >
+          Calcular custo de vida
+        </button>
+
+        <div class="mt-4">
+          <p class="ad-label">Bottom Banner Interno</p>
+          <div class="ad-slot h-16">320 x 100 • Remessas Internacionais</div>
+        </div>
+      </section>
+
+      <!-- ANÚNCIO NATIVO -->
+      <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md mb-10" id="anchor-anuncios">
+        <p class="ad-label">Native Content</p>
+        <div class="ad-slot h-24">
+          Conteúdo patrocinado: escolas de idiomas, mudança, moradia, vistos.
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- 🔸 COLUNA DIREITA = ANÚNCIOS FIXOS / ROLÁVEIS -->
+    <!-- ============================ -->
+    <aside class="hidden md:block sticky-col space-y-5">
+
+      <div>
+        <p class="ad-label">Sidebar 1</p>
+        <div class="ad-slot h-40">300 x 250 • Adsense</div>
+      </div>
+
+      <div>
+        <p class="ad-label">Sidebar 2</p>
+        <div class="ad-slot h-40">300 x 600 • Alta Conversão</div>
+      </div>
+
+      <div>
+        <p class="ad-label">Sidebar 3</p>
+        <div class="ad-slot h-96">300 x 1050 • Longo</div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- 🔹 BANNER FIXO INFERIOR -->
+  <div class="banner-bottom-fixed py-2 px-4 text-center">
+    <p class="ad-label">Footer Fixed</p>
+    <div class="ad-slot h-12">Anúncio fixo (melhor RPM)</div>
+  </div>
+
+<script>
+function calcular() {
+  const destino = document.getElementById("destino").value.trim();
+  const mes = document.getElementById("mes").value.trim();
+
+  if (!destino || !mes) {
+    alert("Preencha o destino e o momento da viagem.");
+    return;
+  }
+
+  // Rolar até área de anúncios igual ao original
+  const anchor = document.getElementById("anchor-anuncios");
+  anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const url = `resultado-exterior-brasil.html?destino=${encodeURIComponent(destino)}&mes=${encodeURIComponent(mes)}`;
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 1600);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultado – Custo de Vida</title>
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css" rel="stylesheet">
+
+<style>
+  /* ======== FUNDO DEGRADÊ PREMIUM ======== */
+  body {
+    background: radial-gradient(circle at top, #1e293b 0%, #0f172a 40%, #020617 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+    min-height: 100vh;
+    color: #f8fafc;
+  }
+
+  /* ======== CARDS GLASS PREMIUM ======== */
+  .card {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(18px);
+    border-radius: 1.4rem;
+    padding: 1.8rem 1.6rem;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.35);
+  }
+
+  /* ======== GRADIENTE DO TÍTULO (SEM ERROS) ======== */
+  .title-gradient {
+    background: linear-gradient(90deg, #60a5fa, #818cf8, #a78bfa);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  /* ======== ANÚNCIOS ========== */
+  .ad-slot {
+    border-radius: 1rem;
+    border: 1px dashed rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#e2e8f0;
+    font-size:0.75rem;
+    padding:12px;
+    text-transform:uppercase;
+    text-align:center;
+  }
+
+  .ad-label {
+    font-size:0.62rem;
+    letter-spacing:0.22em;
+    color:#94a3b8;
+    text-transform:uppercase;
+    margin-bottom:0.3rem;
+  }
+
+  /* ======== BANNER FIXO INFERIOR ======== */
+  .banner-bottom-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: rgba(2,6,23,0.9);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+</style>
+
+</head>
+
+<body class="pb-24">
+
+<!-- 🔹 BANNER SUPERIOR -->
+<div class="w-full px-4 pt-4 max-w-3xl mx-auto">
+  <p class="ad-label">Top Banner</p>
+  <div class="ad-slot h-12">
+    320 x 50 – Google AdSense
+  </div>
+</div>
+
+<!-- 🔹 CONTEÚDO CENTRAL -->
+<main class="max-w-3xl mx-auto mt-5 px-4 space-y-7">
+
+  <!-- CARD PRINCIPAL -->
+  <section class="card">
+    <p class="text-[11px] uppercase tracking-[0.25em] text-slate-300 mb-1">
+      Resultado da Simulação
+    </p>
+
+    <h1 class="text-3xl font-extrabold title-gradient" id="tituloDestino">
+      —
+    </h1>
+    <p class="text-[13px] text-slate-300 mt-1" id="subinfoMes">—</p>
+
+    <!-- VALOR FINAL -->
+    <div class="text-center mt-7 mb-8">
+      <p class="text-[13px] text-slate-300 mb-1">Custo mensal estimado:</p>
+
+      <h2 class="text-5xl font-extrabold text-indigo-400 drop-shadow-sm" id="valorFinal">
+        —
+      </h2>
+
+      <p class="text-[12px] mt-2 text-slate-400">
+        Estimativa para 1 adulto • Vida moderada
+      </p>
+    </div>
+
+    <!-- Banner interno -->
+    <p class="ad-label">In-Card Banner</p>
+    <div class="ad-slot h-16">
+      300 x 100 – Conta Global / Cartões Internacionais
+    </div>
+
+    <!-- Itens considerados -->
+    <div class="mt-8">
+      <h3 class="text-sm font-semibold text-white mb-2">
+        O que está dentro desse valor:
+      </h3>
+
+      <ul class="text-[13px] text-slate-300 space-y-1.5 list-disc list-inside">
+        <li>Aluguel médio no destino</li>
+        <li>Mercado e itens essenciais</li>
+        <li>Transporte público ou carro</li>
+        <li>Plano/seguro saúde</li>
+        <li>Internet, energia e serviços básicos</li>
+        <li>Academia / bem-estar</li>
+        <li>Lazer moderado</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- MID BANNER -->
+  <section>
+    <p class="ad-label">Mid Banner</p>
+    <div class="ad-slot h-20">
+      300 x 250 – Seguros, Remessas, Consultorias
+    </div>
+  </section>
+
+  <!-- CARD EXPLICATIVO -->
+  <section class="card">
+    <h3 class="text-sm font-semibold text-white mb-2">
+      Como usar esse resultado:
+    </h3>
+
+    <p class="text-[13px] text-slate-300 leading-relaxed mb-3">
+      Este valor serve como referência realista para sua mudança. Ele indica
+      quanto custa viver com conforto básico no destino escolhido.
+    </p>
+
+    <p class="text-[13px] text-slate-300 leading-relaxed mb-3">
+      Para um estilo mais econômico, considere 70–80%.
+      Para mais conforto, 120–140% é uma faixa ideal.
+    </p>
+
+    <p class="text-[12px] text-slate-400">
+      Em breve, você poderá conectar este resultado ao simulador de salário real,
+      custo de viagem e roteiros Nômade IQ.
+    </p>
+  </section>
+
+  <!-- NATIVE SPONSOR -->
+  <section>
+    <p class="ad-label">Native Content</p>
+    <div class="ad-slot h-20">
+      Consultorias de visto • Escolas • Imigração • Intercâmbio
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS PASSOS -->
+  <section class="card mb-6">
+    <h3 class="text-sm font-semibold text-white mb-2">
+      Próximos passos:
+    </h3>
+
+    <ul class="text-[13px] text-slate-300 space-y-2 list-disc list-inside mb-4">
+      <li>Simular salário ideal para o destino</li>
+      <li>Comparar com outra cidade ou país</li>
+      <li>Calcular custo total da mudança</li>
+      <li>Planejar reserva de 3 a 6 meses</li>
+    </ul>
+
+    <div class="text-center">
+      <button
+        onclick="voltarCalculadora()"
+        class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md transition">
+        Voltar à Calculadora
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- 🔹 BANNER FIXO INFERIOR -->
+<div class="banner-bottom-fixed py-2 px-4">
+  <div class="max-w-3xl mx-auto">
+    <p class="ad-label">Footer Fixed</p>
+    <div class="ad-slot h-12">
+      320 x 50 – Banner fixo (melhor RPM)
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lê parâmetros da URL
+  const params = new URLSearchParams(window.location.search);
+  const destino = params.get("destino") || "Destino não informado";
+  const mes = params.get("mes") || "Momento não informado";
+
+  document.getElementById("tituloDestino").textContent = destino;
+  document.getElementById("subinfoMes").textContent = "Planejado para: " + mes;
+
+  // Valor (placeholder) até integrar API/IA
+  const valor = Math.floor(Math.random()*5000) + 4000;
+  document.getElementById("valorFinal").textContent =
+    "R$ " + valor.toLocaleString("pt-BR");
+
+  // Voltar com fallback
+  function voltarCalculadora() {
+    const fallback = "custo-vida.html"; // 🔁 Troque para o NOME REAL da calculadora
+
+    if (document.referrer) {
+      history.back();
+    } else {
+      window.location.href = fallback;
+    }
+  }
+</script>
+
+</body>
+</html>

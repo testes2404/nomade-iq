@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nômade IQ - Hub Principal</title>
+
+    <!-- Fontes do Google (Roboto e Open Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- 
+      SCRIPT DOS ANÚNCIOS (AdSense / Mediavine)
+    -->
+    <!-- <script async src="URL_DO_GOOGLE_ADS" crossorigin="anonymous"></script> -->
+
+    <!-- 
+      ============================================================
+      CSS INCORPORADO
+      ============================================================
+    -->
+    <style>
+        /*
+         * Estilo CVC-like: Limpo, branco, azul/laranja. Mobile-First.
+         */
+
+        /* --- CORES CVC-LIKE --- */
+        :root {
+            --cor-primaria: #007bff; /* Azul (links, branding) */
+            --cor-secundaria: #ff7f00; /* Laranja (CTAs, botões) */
+            --cor-fundo-claro: #ffffff; /* Fundo principal */
+            --cor-fundo-secao: #f8f9fa; /* Fundo de seções (leve cinza) */
+            --cor-texto-escuro: #343a40; /* Texto principal */
+            --cor-borda: #dee2e6;
+            --cor-header-fundo: #ffffff;
+        }
+
+        /* --- RESET BÁSICO --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--cor-fundo-claro);
+            color: var(--cor-texto-escuro);
+            line-height: 1.6;
+            padding-bottom: 60px; 
+        }
+
+        /* --- CLASSES DE RESPONSIVIDADE (MOBILE FIRST) --- */
+        .hidden-mobile { display: none !important; }
+        .hidden-desktop { display: block !important; }
+
+        @media (min-width: 769px) { 
+            .hidden-desktop { display: none !important; }
+            .hidden-mobile { display: block !important; }
+        }
+
+        /* --- LINKS E BOTÕES --- */
+        a {
+            color: var(--cor-primaria);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-tarefas, .btn-acessar, .cta-button {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-fundo-claro);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap; /* Não quebra linha */
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-tarefas:hover, .btn-acessar:hover, .cta-button:hover {
+            background-color: #e06c00; /* Laranja mais escuro */
+            text-decoration: none;
+        }
+
+        /* --- BANNER SUPERIOR --- */
+        .top-banner {
+            width: 100%;
+            padding: 0.5rem 0;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        /* --- HEADER PRINCIPAL --- */
+        .main-header {
+            background-color: var(--cor-header-fundo);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--cor-borda);
+            flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            margin-right: 1.5rem;
+            text-decoration: none;
+            line-height: 1; /* Alinha a imagem da logo */
+        }
+        .logo img {
+            height: 35px; /* Altura da sua logo */
+            width: auto; /* Largura automática */
+            display: block; /* Remove espaço extra abaixo da imagem */
+        }
+        .logo:hover {
+            text-decoration: none;
+        }
+
+        /* Navegação Principal (Desktop) */
+        .main-nav {
+            display: block; 
+        }
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        .main-nav a {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            color: var(--cor-texto-escuro);
+        }
+        .main-nav a:hover {
+            color: var(--cor-primaria);
+        }
+
+        .currency-display {
+            font-size: 0.9rem;
+            color: var(--cor-texto-escuro);
+            margin-right: 1rem;
+            white-space: nowrap;
+        }
+
+        .mobile-menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 1rem;
+            z-index: 1100; /* Acima do menu */
+        }
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--cor-texto-escuro);
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* === CORREÇÃO: Navegação Mobile (Menu de Bloco) === */
+        .mobile-nav {
+            display: none; /* Escondido por padrão */
+            width: 100%;
+            background-color: var(--cor-fundo-claro);
+            border-bottom: 1px solid var(--cor-borda);
+            margin-bottom: 1rem; /* Separa do banner de tarefas */
+        }
+        .mobile-nav.active {
+            display: block; /* Mostra quando o botão é clicado */
+        }
+        .mobile-nav ul {
+            list-style: none;
+            flex-direction: column;
+        }
+        .mobile-nav li {
+            width: 100%;
+        }
+        .mobile-nav a {
+            display: block;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--cor-fundo-secao);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .mobile-nav a:hover {
+            background-color: var(--cor-fundo-secao);
+            text-decoration: none;
+        }
+
+        /* === SEÇÃO (TAREFAS + BANNER 2) === */
+        .tasks-and-banner-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--cor-fundo-secao);
+            margin-bottom: 1rem;
+        }
+        .tasks-and-banner-section .btn-tarefas {
+            flex-shrink: 0; /* Impede o botão de encolher */
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+        }
+        .tasks-and-banner-section .ad-slot {
+            flex-grow: 1; /* Faz o banner ocupar o resto do espaço */
+            height: 90px;
+        }
+        
+
+        /* --- CONTEÚDO PRINCIPAL (MAIN) --- */
+        .main-content-area {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Ferramentas de Acesso Rápido */
+        .quick-access-tools {
+            display: grid; /* Mudar para grid para melhor controlo */
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .tool-card {
+            background-color: var(--cor-fundo-claro);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+        }
+        .tool-card .icon {
+            font-size: 2rem;
+        }
+        .tool-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+
+        /* Grelha de Calculadoras Principais */
+        .main-calculators-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Uma coluna no mobile */
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .calc-card {
+            background-color: var(--cor-fundo-secao);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .calc-card h3 {
+            margin-bottom: 1rem;
+            color: var(--cor-primaria);
+        }
+        .calc-ad {
+            height: 250px; /* Tamanho do banner */
+        }
+
+        /* Seção Salários Reais */
+        .salario-reais-section {
+            background-color: var(--cor-fundo-secao);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .salario-reais-section h2 {
+            color: var(--cor-primaria);
+            margin-bottom: 1rem;
+        }
+        .salario-ad {
+            height: 250px;
+            margin-top: 1rem;
+        }
+
+        /* Faixa de Banners - Rolável no Mobile */
+        .banner-strip {
+            display: flex; 
+            overflow-x: auto; 
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px; 
+        }
+        .ad-strip {
+            min-width: 120px; 
+            height: 60px;
+            flex-shrink: 0; 
+        }
+
+        /* Prévia de Artigos */
+        .articles-preview h2 {
+            color: var(--cor-primaria);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .articles-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Uma coluna no mobile */
+            gap: 1.5rem;
+        }
+        .article-card {
+            background-color: var(--cor-fundo-secao);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .article-image-placeholder img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .article-card h3 {
+            padding: 0.8rem 1rem 0.2rem 1rem;
+            color: var(--cor-texto-escuro);
+        }
+        .article-card p.article-snippet {
+            padding: 0 1rem 1rem 1rem;
+            font-size: 0.9rem;
+            color: var(--cor-texto-escuro);
+        }
+        .article-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+
+
+        /* --- FOOTER --- */
+        .main-footer {
+            background-color: var(--cor-fundo-secao);
+            border-top: 1px solid var(--cor-borda);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--cor-texto-escuro);
+            margin-top: 2rem;
+        }
+
+
+        /* * --- PLACEHOLDERS DOS ANÚNCIOS --- */
+        .ad-slot {
+            background-color: #f0f0f0;
+            border: 1px dashed var(--cor-primaria);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cor-primaria);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 5px;
+            box-sizing: border-box;
+            min-height: 50px; /* Altura mínima para slots */
+        }
+
+        /* Banner Sticky no Rodapé (Mobile) */
+        .ad-mobile-sticky {
+            height: 50px;
+            width: 100%;
+            background-color: var(--cor-fundo-secao);
+            border-top: 1px solid var(--cor-borda);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- MODAL DE LOGIN --- */
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* Fundo escuro */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--cor-fundo-claro);
+            margin: auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close-button {
+            color: var(--cor-texto-escuro);
+            font-size: 2rem;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+        .modal-content h2 {
+            color: var(--cor-primaria);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .modal-content input[type="email"],
+        .modal-content input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--cor-borda);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .modal-content button.cta-button {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+        .modal-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+
+        /* --- MEDIA QUERIES (ADAPTAÇÃO PARA DESKTOP) --- */
+        @media (min-width: 769px) {
+            body {
+                padding-bottom: 0; /* Remove o padding do rodapé no desktop */
+            }
+
+            /* Header no Desktop */
+            .main-header {
+                flex-wrap: nowrap; /* Não quebra linha */
+                padding: 1rem 2rem;
+            }
+            .main-nav {
+                display: block !important; /* Garante que o menu desktop esteja visível */
+            }
+
+            /* Nova Seção (Tarefas + Banner 2) no Desktop */
+            .tasks-and-banner-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 2rem; /* Alinha com o header */
+                margin: 0 auto 1.5rem auto; /* Centraliza */
+                max-width: 1200px;
+            }
+            .tasks-and-banner-section .ad-slot {
+                height: 90px;
+                max-width: 728px; /* Tamanho padrão leaderboard */
+                margin-left: auto; /* Alinha o banner à direita */
+                flex-grow: 1;
+            }
+            .tasks-and-banner-section .btn-tarefas {
+                margin-right: auto; /* Alinha o botão à esquerda */
+            }
+
+
+            /* Grelhas no Desktop */
+            .main-calculators-grid {
+                grid-template-columns: 1fr 300px 1fr; /* Calc | Banner | Calc */
+                align-items: stretch; /* Estica os cards para a altura do banner */
+            }
+            .articles-grid {
+                grid-template-columns: 1fr 1fr; /* Duas colunas para artigos */
+            }
+            .tool-card {
+                min-width: 140px; /* Ajuste para desktop */
+            }
+            
+            .banner-strip {
+                display: grid; /* No desktop, voltamos para a grelha */
+                grid-template-columns: repeat(5, 1fr); /* 5 colunas iguais */
+                overflow-x: visible; /* Remove a barra de scroll */
+                padding-bottom: 0;
+            }
+            .ad-strip {
+                min-width: auto; /* Remove o min-width */
+                height: 90px;
+            }
+
+            .calc-card {
+                display: flex;
+                flex-direction: column;
+                justify-content: center; /* Centraliza conteúdo do card */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BUNNER 1 (Topo) -->
+    <div class="top-banner ad-slot ad-leaderboard hidden-mobile">
+        [BUNNER 1 - Topo Desktop - 728x90]
+    </div>
+    <div class="top-banner ad-slot ad-mobile-top hidden-desktop">
+        [BUNNER 1 - Topo Mobile - 320x100]
+    </div>
+
+    <!-- HEADER: Contém a logo, navegação, moedas -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="/" class="logo">
+                <img src="recursos/logo.png" alt="Nômade IQ Logo">
+            </a>
+            
+            <nav class="main-nav hidden-mobile">
+                <ul>
+                    <li><a href="#" id="contact-link" title="Fale com Nômade IQ">Contato</a></li>
+                    <li><a href="comunidade/comunidade.html">Comunidade</a></li>
+                    <li><a href="#" id="login-link">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="currency-display hidden-mobile"> <!-- Esconde moedas no mobile para caber -->
+                <span id="dolar-value">Dolar: --</span> |
+                <span id="euro-value">Euro: --</span> |
+                <span id="yen-value">Yen: --</span>
+            </div>
+            
+            <!-- Botão Hambúrguer para o menu mobile -->
+            <button class="mobile-menu-toggle hidden-desktop" id="mobile-menu-toggle" aria-label="Abrir Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 
+      === CORREÇÃO AQUI ===
+      Navegação Mobile (Menu de Bloco)
+      Agora fica FORA do header e só aparece ao clicar no "hambúrguer".
+    -->
+    <nav class="mobile-nav hidden-desktop" id="mobile-nav-menu">
+        <ul>
+            <!-- Moedas aparecem dentro do menu mobile -->
+            <li class="currency-display-mobile">
+                <span id="dolar-value-mobile">Dolar: --</span> |
+                <span id="euro-value-mobile">Euro: --</span> |
+                <span id="yen-value-mobile">Yen: --</span>
+            </li>
+            <li><a href="#" id="contact-link-mobile">Contato</a></li>
+            <li><a href="comunidade/comunidade.html">Comunidade</a></li>
+            <li><a href="#" id="login-link-mobile">Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- 
+      SEÇÃO TAREFAS + BUNNER 2 (Como no rascunho)
+    -->
+    <section class="tasks-and-banner-section">
+        <a href="ferramentas/tarefas.html" class="btn-tarefas">Tarefas</a>
+        
+        <!-- BUNNER 2 -->
+        <div class="ad-slot ad-leaderboard">
+            [BUNNER 2 - 728x90 / 320x100]
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content-area">
+        
+        <!-- Ferramentas de Acesso Rápido (Seu rascunho) -->
+        <section class="quick-access-tools">
+            <a href="ferramentas/novidades.html" class="tool-card">
+                <span class="icon">📰</span>
+                Últimas Notícias
+            </a>
+            <a href="ferramentas/checklist.html" class="tool-card">
+                <span class="icon">✅</span>
+                Checklist
+            </a>
+            <a href="ferramentas/simulador-salario.html" class="tool-card">
+                <span class="icon">💰</span>
+                Simulador Salário
+            </a>
+            <a href="ferramentas/simulador-roteiros.html" class="tool-card">
+                <span class="icon">🗺️</span>
+                Simulador Roteiros
+            </a>
+            <a href="ferramentas/bonus.html" class="tool-card">
+                <span class="icon">🎁</span>
+                Bônus e Vantagens
+            </a>
+        </section>
+
+        <!-- Grelha de Calculadoras Principais -->
+        <section class="main-calculators-grid">
+            <div class="calc-card">
+                <h3>Calculadora Custo de Vida</h3>
+                <a href="ferramentas/calc-exterior.html" class="btn-acessar">Acessar</a>
+            </div>
+            <!-- BUNNER 3 -->
+            <div class="ad-slot ad-in-content calc-ad">
+                [BUNNER 3 - Meio Calculadoras - 300x250]
+            </div>
+            <div class="calc-card">
+                <h3>Calculadora Custo Viagem</h3>
+                <a href="ferramentas/calc-viagem.html" class="btn-acessar">Acessar</a>
+            </div>
+        </section>
+
+        <!-- Seção Salários Reais -->
+        <section class="salario-reais-section">
+            <h2>Salários Reais</h2>
+            <a href="ferramentas/salario-real.html" class="btn-acessar">Ver mais</a>
+            <!-- BUNNER 4 -->
+            <div class="ad-slot ad-in-content salario-ad">
+                [BUNNER 4 - Salários Reais - 300x250]
+            </div>
+        </section>
+
+        <!-- Faixa de Banners (Rolável no Mobile) -->
+        <section class="banner-strip">
+            <div class="ad-slot ad-strip">
+                [BUNNER 5]
+            </div>
+            <div class="ad-slot ad-strip">
+                [BUNNER 6]
+            </div>
+            <div class="ad-slot ad-strip"> 
+                [BUNNER 7]
+            </div>
+            <div class="ad-slot ad-strip">
+                [BUNNER 8]
+            </div>
+            <div class="ad-slot ad-strip">
+                [BUNNER 9]
+            </div>
+        </section>
+
+        <!-- Prévia dos Artigos (Sua silhueta de prévia) -->
+        <section class="articles-preview">
+            <h2>Últimos Artigos</h2>
+            <div class="articles-grid">
+                <!-- Artigo Esquerda -->
+                <a href="ferramentas/artigos.html#artigo1" class="article-card">
+                    <div class="article-image-placeholder">
+                        <!-- Placeholder de Imagem -->
+                        <img src="https://placehold.co/300x200/f0f0f0/343a40?text=Previa+Artigo+1" alt="Preview Artigo 1" onerror="this.style.border='1px solid #ccc'; this.style.backgroundColor='#eee';">
+                    </div>
+                    <h3>Título do Último Artigo 1</h3>
+                    <p class="article-snippet">Pequena descrição ou trecho do artigo para instigar o clique. Aqui você mostra que há mais conteúdo rolando a tela...</p>
+                </a>
+                <!-- Artigo Direita -->
+                <a href="ferramentas/artigos.html#artigo2" class="article-card">
+                    <div class="article-image-placeholder">
+                        <img src="https://placehold.co/300x200/f0f0f0/343a40?text=Previa+Artigo+2" alt="Preview Artigo 2" onerror="this.style.border='1px solid #ccc'; this.style.backgroundColor='#eee';">
+                    </div>
+                    <h3>Título do Último Artigo 2</h3>
+                    <p class="article-snippet">Mais uma prévia, convidando o utilizador a rolar e aprofundar-se nos seus conteúdos recentes.</p>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 Nômade IQ. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- MODAL DE LOGIN (Escondido por padrão) -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Login no Nômade IQ</h2>
+            <form>
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="email" required>
+                <label for="login-password">Senha:</label>
+                <input type="password" id="login-password" name="password" required>
+                <button type="submit" class="cta-button">Entrar</button>
+                <a href="#" class="modal-link">Criar Senha</a>
+                <a href="#" class="modal-link">Redefinir Senha</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- BUNNER 10 (Mobile Sticky) -->
+    <div class="ad-slot ad-mobile-sticky hidden-desktop">
+        [BUNNER 10 (Mobile Sticky) - 320x50]
+    </div>
+
+    <!-- 
+      ============================================================
+      JAVASCRIPT INCORPORADO
+      ============================================================
+    -->
+    <script>
+        /*
+         * Ficheiro: js/main.js
+         * JavaScript principal para funcionalidades globais.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Lógica do Menu Mobile ---
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileNavMenu = document.getElementById('mobile-nav-menu');
+
+            if (mobileMenuToggle && mobileNavMenu) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    mobileNavMenu.classList.toggle('active');
+                    mobileMenuToggle.classList.toggle('active');
+                    const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true' || false;
+                    mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+                });
+            }
+
+            // --- Lógica do Link de Contato ---
+            const contactLinks = [
+                document.getElementById('contact-link'), 
+                document.getElementById('contact-link-mobile')
+            ];
+            
+            contactLinks.forEach(link => {
+                if (link) {
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault(); 
+                        const emailAddress = 'fale.nomadeiq@gmail.com';
+                        if (link.textContent.trim() === 'Contato') {
+                            link.textContent = emailAddress; 
+                        }
+                        window.location.href = `mailto:${emailAddress}`;
+                    });
+                }
+            });
+        });
+
+
+        /*
+         * Ficheiro: js/cotacao-moedas.js
+         * Script para buscar e exibir cotações de moedas.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const dolarSpans = [
+                document.getElementById('dolar-value'),
+                document.getElementById('dolar-value-mobile')
+            ];
+            const euroSpans = [
+                document.getElementById('euro-value'),
+                document.getElementById('euro-value-mobile')
+            ];
+            const yenSpans = [
+                document.getElementById('yen-value'),
+                document.getElementById('yen-value-mobile')
+            ];
+
+            async function fetchCurrencyRates() {
+                const apiURL = 'https://api.exchangerate-api.com/v4/latest/BRL';
+                let ratesData = {}; // Para guardar os valores
+
+                try {
+                    const response = await fetch(apiURL);
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta da rede');
+                    }
+                    const data = await response.json();
+                    const rates = data.rates;
+                    
+                    const usdToBrl = (1 / rates.USD).toFixed(2);
+                    const eurToBrl = (1 / rates.EUR).toFixed(2);
+                    const jpyToBrl = (1 / rates.JPY).toFixed(3); 
+
+                    ratesData = { usdToBrl, eurToBrl, jpyToBrl };
+
+                } catch (error) {
+                    console.error('Erro ao buscar cotações de moedas:', error);
+                    // Fallback para valores estáticos se a API falhar
+                    ratesData = {
+                        usdToBrl: "5,20",
+                        eurToBrl: "5,60",
+                        jpyToBrl: "0,035"
+                    };
+                }
+
+                // Atualiza todos os spans (desktop e mobile)
+                dolarSpans.forEach(span => {
+                    if (span) span.textContent = `Dolar: R$ ${ratesData.usdToBrl}`;
+                });
+                euroSpans.forEach(span => {
+                    if (span) span.textContent = `Euro: R$ ${ratesData.eurToBrl}`;
+                });
+                yenSpans.forEach(span => {
+                    if (span) span.textContent = `Yen: R$ ${ratesData.jpyToBrl}`;
+                });
+            }
+            
+            fetchCurrencyRates();
+            setInterval(fetchCurrencyRates, 30 * 60 * 1000); 
+        });
+
+
+        /*
+         * Ficheiro: js/login-modal.js
+         * Script para controlar o modal de login.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginLinks = [
+                document.getElementById('login-link'),
+                document.getElementById('login-link-mobile')
+            ];
+            
+            const loginModal = document.getElementById('login-modal');
+            const closeButton = loginModal ? loginModal.querySelector('.close-button') : null;
+
+            const openModal = (event) => {
+                event.preventDefault(); 
+                if (loginModal) {
+                    loginModal.style.display = 'flex'; 
+                }
+            };
+
+            const closeModal = () => {
+                if (loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            };
+
+            loginLinks.forEach(link => {
+                if (link) {
+                    link.addEventListener('click', openModal);
+                }
+            });
+
+            if (closeButton) {
+                closeButton.addEventListener('click', closeModal);
+            }
+
+            if (loginModal) {
+                window.addEventListener('click', (event) => {
+                    if (event.target === loginModal) {
+                        closeModal();
+                    }
+                });
+            }
+
+            const loginForm = loginModal ? loginModal.querySelector('form') : null;
+            if (loginForm) {
+                loginForm.addEventListener('submit', (event) => {
+                    event.preventDefault(); 
+                    alert('Login simulado! (Funcionalidade real seria implementada no backend)');
+                    closeModal(); 
+                });
+            }
+        });
+    </script>
+</body>
+</html>
