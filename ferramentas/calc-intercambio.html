@@ -253,7 +253,7 @@
           </div>
         </div>
 
-        <!-- Lista simples com outros pacotes (opcional) -->
+        <!-- Lista simples com outros pacotes -->
         <div id="lista-pacotes" class="thin-scrollbar max-h-[260px] overflow-y-auto space-y-2 text-xs sm:text-sm">
           <p class="text-[11px] text-slate-500">
             Assim que as opções carregarem, você verá aqui um resumo dos pacotes de intercâmbio base usados na calculadora.
@@ -266,7 +266,8 @@
 
   <!-- SCRIPT -->
   <script>
-    const API_URL = "http://localhost:8000/api/intercambio/ofertas";
+    // ✅ URL corrigida para o backend rodando no Render
+    const API_URL = "https://nomade-iq.onrender.com/api/intercambio/ofertas";
 
     const selectPacote = document.getElementById("pacote");
     const prazoInput = document.getElementById("prazo");
@@ -343,14 +344,14 @@
           optDefault.textContent = "Selecione um pacote de referência";
           selectPacote.appendChild(optDefault);
 
-          pacotesCache.forEach((p, idx) => {
+          pacotesCache.forEach((p) => {
             const opt = document.createElement("option");
             opt.value = p.id;
             const preco = p.preco_texto || (p.preco_num ? formatBRL(p.preco_num) : "");
             opt.textContent = `${p.titulo}${preco ? " — " + preco : ""}`;
-            if (idx === 0) opt.selected = true;
             selectPacote.appendChild(opt);
           });
+
           setStatus("Pacotes carregados. Escolha um e preencha o prazo.", "info");
         }
 
@@ -387,8 +388,13 @@
           listaPacotes.appendChild(p);
         }
       } catch (err) {
-        console.error(err);
-        setStatus("Não foi possível carregar pacotes. Tente novamente mais tarde.", "error");
+        console.error("Erro ao carregar pacotes:", err);
+        selectPacote.innerHTML = "";
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Erro ao carregar pacotes";
+        selectPacote.appendChild(opt);
+        setStatus("Não foi possível carregar pacotes (verifique se a API do Render está no ar).", "error");
       }
     }
 
