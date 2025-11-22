@@ -5,10 +5,10 @@ import os
 
 app = FastAPI()
 
-# Monta a pasta raiz para servir os arquivos HTML, CSS e JS
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+# Serve arquivos estáticos (HTML, CSS, JS, imagens, etc.)
+app.mount("/static", StaticFiles(directory="."), name="static")
 
-# Rota principal (carrega index.html)
+# Página inicial
 @app.get("/")
 def root():
     index_path = os.path.join(os.getcwd(), "index.html")
@@ -16,7 +16,7 @@ def root():
         return FileResponse(index_path)
     return {"detail": "index.html não encontrado"}
 
-# Exemplo: rota de API
+# Teste simples de API
 @app.get("/api/status")
 def status():
     return {"status": "API e site online no mesmo serviço"}
