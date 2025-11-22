@@ -5,18 +5,21 @@ import os
 
 app = FastAPI()
 
-# Serve arquivos estáticos (HTML, CSS, JS, imagens, etc.)
-app.mount("/static", StaticFiles(directory="."), name="static")
+# === Caminho absoluto da pasta principal ===
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Página inicial
+# === Servir arquivos estáticos ===
+app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
+
+# === Página inicial ===
 @app.get("/")
-def root():
-    index_path = os.path.join(os.getcwd(), "index.html")
+async def serve_index():
+    index_path = os.path.join(BASE_DIR, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
     return {"detail": "index.html não encontrado"}
 
-# Teste simples de API
+# === Rota de teste ===
 @app.get("/api/status")
-def status():
-    return {"status": "API e site online no mesmo serviço"}
+async def status():
+    return {"status": "API rodando com sucesso no Render!"}
