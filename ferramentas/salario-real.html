@@ -8,6 +8,9 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_ID_AQUI" crossorigin="anonymous"></script>
+
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
@@ -24,26 +27,53 @@
       background-color: rgba(148, 163, 184, 0.8);
       border-radius: 999px;
     }
+
+    .ads-label {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.3rem;
+    }
+
+    .ads-slot {
+      border: 1px dashed rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      border-radius: 0.75rem;
+      padding: 8px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      min-height: 40px;
+    }
+
+    .ads-fixed-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: rgba(2,6,23,0.9);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding: 6px 12px;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col pb-16">
 
   <!-- HEADER -->
   <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="flex items-center gap-2">
-        <!-- logo ajustada para ../recursos -->
         <img src="../recursos/logo.png" alt="Nômade IQ" class="h-8 w-auto" />
         <div class="leading-tight">
-          <p class="text-[11px] uppercase tracking-[0.28em] text-slate-400">
-            Calculadora
-          </p>
-          <h1 class="text-sm sm:text-base font-semibold text-slate-50">
-            Salários Reais
-          </h1>
+          <p class="text-[11px] uppercase tracking-[0.28em] text-slate-400">Calculadora</p>
+          <h1 class="text-sm sm:text-base font-semibold text-slate-50">Salários Reais</h1>
         </div>
       </div>
-
       <a href="../index.html"
          class="text-[11px] sm:text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800 transition">
         Voltar
@@ -51,9 +81,25 @@
     </div>
   </header>
 
+  <!-- Banner Superior -->
+  <div class="max-w-4xl mx-auto mt-3 px-4">
+    <p class="ads-label">Top Banner</p>
+    <div class="ads-slot">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="1111111111"
+           data-ad-format="auto"
+           data-full-width-responsive="true"
+           loading="lazy"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
   <!-- CONTEÚDO -->
   <main class="flex-1">
     <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
       <!-- EXPLICAÇÃO -->
       <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
         <h2 class="text-lg sm:text-xl font-semibold text-slate-50 mb-2">
@@ -63,43 +109,47 @@
           Usamos dados públicos de plataformas de transparência salarial (como o
           <span class="font-semibold text-slate-200">Salário Transparente</span>)
           para estimar faixas de remuneração por <b>empresa</b>, <b>cargo</b> e <b>cidade</b>.
-          Aqui você não vê “salário médio genérico”: vê números próximos da realidade.
         </p>
         <p class="text-xs sm:text-sm text-slate-400">
-          <span class="font-semibold text-slate-200">Salário real</span> = quanto esse salário
-          efetivamente compra hoje (ajustado pela inflação, custo de vida e benefícios). Nesta primeira
-          versão mostramos o salário informado na fonte + faixas de referência. Depois podemos plugar
-          a calculadora de custo de vida para trazer o poder de compra em cada cidade.
+          <span class="font-semibold text-slate-200">Salário real</span> = quanto esse salário efetivamente compra hoje
+          (ajustado pela inflação, custo de vida e benefícios).
         </p>
       </section>
 
-      <!-- FORMULÁRIO DE BUSCA -->
+      <!-- Banner 1 -->
+      <div>
+        <p class="ads-label">Inline Banner #1</p>
+        <div class="ads-slot">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-SEU_ID_AQUI"
+               data-ad-slot="2222222222"
+               data-ad-format="auto"
+               data-full-width-responsive="true"
+               loading="lazy"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+      </div>
+
+      <!-- FORMULÁRIO -->
       <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
-        <h3 class="text-sm font-semibold text-slate-100 mb-3">
-          Filtro de salários
-        </h3>
+        <h3 class="text-sm font-semibold text-slate-100 mb-3">Filtro de salários</h3>
 
         <form id="busca-form" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-3">
           <div class="flex flex-col gap-1">
-            <label for="empresa" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
-              Empresa
-            </label>
+            <label for="empresa" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">Empresa</label>
             <input id="empresa" type="text" placeholder="Ex: Nubank, Itaú, iFood"
               class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500" />
           </div>
 
           <div class="flex flex-col gap-1">
-            <label for="cargo" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
-              Cargo
-            </label>
+            <label for="cargo" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">Cargo</label>
             <input id="cargo" type="text" placeholder="Ex: Product Manager, Analista, Dev Pleno"
               class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500" />
           </div>
 
           <div class="flex flex-col gap-1">
-            <label for="cidade" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">
-              Cidade / Local
-            </label>
+            <label for="cidade" class="text-[11px] font-medium text-slate-300 uppercase tracking-wide">Cidade / Local</label>
             <input id="cidade" type="text" placeholder="Ex: São Paulo, Remoto"
               class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500" />
           </div>
@@ -121,28 +171,54 @@
         </form>
       </section>
 
+      <!-- Banner 2 -->
+      <div>
+        <p class="ads-label">Inline Banner #2</p>
+        <div class="ads-slot">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-SEU_ID_AQUI"
+               data-ad-slot="3333333333"
+               data-ad-format="auto"
+               data-full-width-responsive="true"
+               loading="lazy"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+      </div>
+
       <!-- RESULTADOS -->
       <section class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/40">
         <div class="flex items-center justify-between gap-2 mb-3">
           <div>
-            <h3 class="text-sm font-semibold text-slate-100">
-              Resultados de salários
-            </h3>
-            <p class="text-[11px] text-slate-500">
-              Dados inspirados em plataformas como o Salário Transparente. Não substituem sua própria pesquisa.
-            </p>
+            <h3 class="text-sm font-semibold text-slate-100">Resultados de salários</h3>
+            <p class="text-[11px] text-slate-500">Dados inspirados em plataformas como o Salário Transparente.</p>
           </div>
         </div>
-
         <div id="lista-resultados" class="thin-scrollbar max-h-[420px] overflow-y-auto space-y-3 text-xs sm:text-sm">
           <p class="text-[11px] text-slate-500">
-            Nenhuma busca feita ainda. Use os filtros acima para ver faixas salariais aproximadas por empresa/cargo.
+            Nenhuma busca feita ainda. Use os filtros acima para ver faixas salariais aproximadas.
           </p>
         </div>
       </section>
     </div>
   </main>
 
+  <!-- Banner fixo inferior -->
+  <div class="ads-fixed-bottom">
+    <p class="ads-label">Footer Banner</p>
+    <div class="ads-slot">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="4444444444"
+           data-ad-format="auto"
+           data-full-width-responsive="true"
+           loading="lazy"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <!-- SCRIPT PRINCIPAL -->
   <script>
     const formBusca = document.getElementById("busca-form");
     const empresaInput = document.getElementById("empresa");
@@ -158,7 +234,6 @@
 
     const MOCK_SALARIOS = [
       { empresa: "Vale", cargo: "Analista de Dados", cidade: "Belo Horizonte", nivel: "Pleno", modalidade: "Híbrido", faixa: "R$ 8.000 – R$ 12.000", mediana: "R$ 10.200" },
-      { empresa: "Vale", cargo: "Analista de Dados", cidade: "Rio de Janeiro", nivel: "Sênior", modalidade: "Presencial", faixa: "R$ 11.000 – R$ 16.000", mediana: "R$ 13.500" },
       { empresa: "Nubank", cargo: "Product Manager", cidade: "São Paulo", nivel: "Pleno", modalidade: "Híbrido", faixa: "R$ 18.000 – R$ 26.000", mediana: "R$ 22.000" },
       { empresa: "Itaú", cargo: "Analista de Sistemas", cidade: "São Paulo", nivel: "Júnior", modalidade: "Híbrido", faixa: "R$ 5.000 – R$ 7.500", mediana: "R$ 6.200" },
       { empresa: "iFood", cargo: "Engenheiro de Software", cidade: "Remoto", nivel: "Sênior", modalidade: "Remoto", faixa: "R$ 19.000 – R$ 28.000", mediana: "R$ 23.800" }
@@ -184,7 +259,7 @@
       if (!dados || !Array.isArray(dados) || dados.length === 0) {
         const p = document.createElement("p");
         p.className = "text-[11px] text-slate-500";
-        p.textContent = "Não encontramos faixas salariais para esse filtro. Tente ampliar a busca.";
+        p.textContent = "Não encontramos faixas salariais para esse filtro.";
         listaResultados.appendChild(p);
         return;
       }
@@ -199,15 +274,15 @@
 
         const titulo = document.createElement("p");
         titulo.className = "text-xs sm:text-sm font-semibold text-slate-50 truncate";
-        titulo.textContent = `${item.cargo || "Cargo desconhecido"} — ${item.empresa || "Empresa"}`;
+        titulo.textContent = `${item.cargo || "Cargo"} — ${item.empresa || "Empresa"}`;
 
         const meta = document.createElement("p");
         meta.className = "text-[11px] text-slate-400 mt-0.5 truncate";
-        meta.textContent = [item.cidade || null, item.nivel || null, item.modalidade || null].filter(Boolean).join(" · ");
+        meta.textContent = [item.cidade, item.nivel, item.modalidade].filter(Boolean).join(" · ");
 
         const faixa = document.createElement("p");
         faixa.className = "text-[11px] text-slate-300 mt-1";
-        faixa.innerHTML = `<span class="text-slate-400">Faixa estimada:</span> <span class="font-semibold text-emerald-300">${item.faixa || "R$ ? a R$ ?"}</span>` +
+        faixa.innerHTML = `<span class="text-slate-400">Faixa:</span> <span class="font-semibold text-emerald-300">${item.faixa}</span>` +
           (item.mediana ? ` <span class="text-slate-400"> · Mediana:</span> <span class="font-semibold text-slate-100">${item.mediana}</span>` : "");
 
         left.appendChild(titulo);
@@ -224,10 +299,10 @@
       const c = cargo?.toLowerCase() || "";
       const ci = cidade?.toLowerCase() || "";
       return MOCK_SALARIOS.filter(item => {
-        const okEmpresa = !e || (item.empresa && item.empresa.toLowerCase().includes(e));
-        const okCargo = !c || (item.cargo && item.cargo.toLowerCase().includes(c));
-        const okCidade = !ci || (item.cidade && item.cidade.toLowerCase().includes(ci));
-        return okEmpresa && okCargo && okCidade;
+        const okE = !e || item.empresa.toLowerCase().includes(e);
+        const okC = !c || item.cargo.toLowerCase().includes(c);
+        const okCi = !ci || item.cidade.toLowerCase().includes(ci);
+        return okE && okC && okCi;
       });
     }
 
@@ -243,7 +318,7 @@
       }
 
       setLoading(true);
-      setStatus("Consultando API de salários...", "info");
+      setStatus("Consultando dados...", "info");
 
       try {
         const params = new URLSearchParams();
@@ -254,24 +329,13 @@
         const resp = await fetch(`${API_URL}?${params.toString()}`);
         if (!resp.ok) throw new Error("Erro ao consultar API de salários.");
         const data = await resp.json();
-        const resultados = Array.isArray(data.resultados) ? data.resultados : data;
 
-        if (!resultados || resultados.length === 0) {
-          const mockFiltrado = filtrarMock(empresa, cargo, cidade);
-          renderResultados(mockFiltrado);
-          setStatus("API respondeu, mas sem dados. Mostrando exemplos aproximados.", "info");
+        if (!data || !data.length) {
+          renderResultados(filtrarMock(empresa, cargo, cidade));
+          setStatus("API sem dados. Mostrando exemplos aproximados.", "info");
         } else {
-          renderResultados(resultados);
-          setStatus("Consulta concluída com sucesso.", "success");
+          renderResultados(data);
+          setStatus("Consulta concluída.", "success");
         }
       } catch (err) {
-        const mockFiltrado = filtrarMock(empresa, cargo, cidade);
-        renderResultados(mockFiltrado);
-        setStatus("API indisponível. Mostrando exemplos aproximados (modo offline).", "info");
-      } finally {
-        setLoading(false);
-      }
-    });
-  </script>
-</body>
-</html>
+        renderResultados(fil)

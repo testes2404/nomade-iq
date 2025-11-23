@@ -1,354 +1,279 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trilha — Comissário de Voo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultado – Custo de Vida</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css" rel="stylesheet">
 
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_ID_AQUI" crossorigin="anonymous"></script>
 
-    <!-- Estilo do HUB -->
-    <link rel="stylesheet" href="../css/hub.css" />
+<style>
+  /* ======== FUNDO DEGRADÊ PREMIUM ======== */
+  body {
+    background: radial-gradient(circle at top, #1e293b 0%, #0f172a 40%, #020617 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+    min-height: 100vh;
+    color: #f8fafc;
+  }
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617;
-            color: #e5e7eb;
-        }
+  /* ======== CARDS GLASS PREMIUM ======== */
+  .card {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(18px);
+    border-radius: 1.4rem;
+    padding: 1.8rem 1.6rem;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.35);
+  }
 
-        /* Vídeo de fundo */
-        #bg-video {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            filter: brightness(0.35);
-        }
+  /* ======== GRADIENTE DO TÍTULO (SEM ERROS) ======== */
+  .title-gradient {
+    background: linear-gradient(90deg, #60a5fa, #818cf8, #a78bfa);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
 
-        /* Banner */
-        .ads-banner {
-            background: rgba(15, 23, 42, 0.90);
-            border: 1px solid rgba(148,163,184,0.35);
-            backdrop-filter: blur(10px);
-            border-radius: 0.75rem;
-        }
+  /* ======== ANÚNCIOS ========== */
+  .ad-slot {
+    border-radius: 1rem;
+    border: 1px dashed rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#e2e8f0;
+    font-size:0.75rem;
+    padding:12px;
+    text-transform:uppercase;
+    text-align:center;
+  }
 
-        /* Aba */
-        .tab-btn {
-            background: rgba(15,23,42,0.82);
-            border: 1px solid rgba(148,163,184,0.25);
-            padding: 8px 16px;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #cbd5e1;
-            white-space: nowrap;
-        }
+  .ad-label {
+    font-size:0.62rem;
+    letter-spacing:0.22em;
+    color:#94a3b8;
+    text-transform:uppercase;
+    margin-bottom:0.3rem;
+  }
 
-        .tab-btn.active {
-            background: #3b82f6;
-            border-color: #60a5fa;
-            color: white;
-        }
+  /* ======== BANNER FIXO INFERIOR ======== */
+  .banner-bottom-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: rgba(2,6,23,0.9);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+</style>
 
-        /* Esconder barra de rolagem horizontal do menu no mobile */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
 </head>
 
-<body class="min-h-screen">
+<body class="pb-24">
 
-    <!-- Vídeo de fundo -->
-    <video id="bg-video" autoplay muted loop playsinline>
-        <source src="../recursos/hub.mp4" type="video/mp4" />
-    </video>
-
-    <!-- HEADER SUPERIOR -->
-    <header class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            
-            <!-- Logo + texto -->
-            <div class="flex items-center gap-3">
-                <img src="../recursos/logo.png" class="h-10 w-auto" />
-                <div>
-                    <p class="text-xs uppercase tracking-widest text-indigo-400">Trilha Especial</p>
-                    <p class="font-semibold text-gray-100">Comissário de Voo</p>
-                </div>
-            </div>
-
-            <!-- Usuário -->
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs text-gray-400">Conectado como</p>
-                    <p id="user-label" class="text-sm font-medium text-gray-100">…</p>
-                </div>
-
-                <div class="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold">
-                    <span id="user-avatar-letter">A</span>
-                </div>
-            </div>
-
-        </div>
-    </header>
-
-    <!-- SE NÃO ESTIVER LOGADO -->
-    <section id="lock-message" class="max-w-xl mx-auto mt-12 px-6 py-8 text-center hidden">
-        <h2 class="text-xl font-semibold text-red-400 mb-3">Acesso restrito</h2>
-        <p class="text-sm text-gray-300 mb-6">
-            Faça login para visualizar esta trilha exclusiva.
-        </p>
-        <a href="../index.html"
-           class="px-6 py-3 bg-indigo-600 rounded-full font-semibold text-white">
-            Voltar ao início
-        </a>
-    </section>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main id="main-content" class="max-w-6xl mx-auto px-4 py-10 hidden">
-
-        <!-- Banner superior -->
-        <div class="ads-banner px-4 py-4 mb-8">
-            <p class="text-[10px] text-gray-500 mb-1">Banner superior — espaço para anúncio</p>
-            <div class="h-16 flex items-center justify-center text-gray-300 text-sm">
-                Anúncio Aqui — Faixa superior
-            </div>
-        </div>
-
-        <!-- MENU DE MOMENTOS (faixa como na imagem) -->
-        <div class="ads-banner px-4 py-3 mb-6">
-            <!-- linha onde ficam as abas -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
-                <button class="tab-btn active" data-target="momento-1">
-                    O que saber antes de qualquer coisa?
-                </button>
-                <button class="tab-btn" data-target="momento-2">
-                    O que estudar para a certificação?
-                </button>
-                <button class="tab-btn" data-target="momento-3">
-                    O que saber depois da certificação?
-                </button>
-                <button class="tab-btn" data-target="momento-4">
-                    Como passar na entrevista?
-                </button>
-            </div>
-        </div>
-
-        <!-- ÁREA DE CONTEÚDO QUE MUDA CONFORME O MENU -->
-        <section id="content-area" class="bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-6 mb-6">
-            <!-- Momento 1 -->
-            <div id="momento-1" class="moment-content">
-                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-1">
-                    O que saber antes de qualquer coisa?
-                </h2>
-                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-1">
-                    Aqui você pode colocar o conteúdo introdutório: visão geral da profissão,
-                    rotina de comissário, mitos e verdades, pré-requisitos básicos, saúde,
-                    idiomas, como funciona o mercado e o que já dá para ir se preparando hoje.
-                </p>
-            </div>
-
-            <!-- Momento 2 -->
-            <div id="momento-2" class="moment-content hidden">
-                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-2">
-                    O que estudar para a certificação?
-                </h2>
-                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-2">
-                    Nesta aba entram os temas da prova da ANAC, material de estudo recomendado,
-                    simulados, tempo de preparação, como organizar o cronograma e dicas práticas
-                    para memorizar normas e procedimentos.
-                </p>
-            </div>
-
-            <!-- Momento 3 -->
-            <div id="momento-3" class="moment-content hidden">
-                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-3">
-                    O que saber depois da certificação?
-                </h2>
-                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-3">
-                    Aqui você fala sobre o que acontece depois da aprovação: como usar o CHT,
-                    como montar currículo, onde buscar oportunidades, processos internos das
-                    cias aéreas e o que esperar dos primeiros meses na profissão.
-                </p>
-            </div>
-
-            <!-- Momento 4 -->
-            <div id="momento-4" class="moment-content hidden">
-                <h2 class="text-lg font-semibold mb-3" id="titulo-momento-4">
-                    Como passar na entrevista?
-                </h2>
-                <p class="text-sm text-slate-200 leading-relaxed" id="texto-momento-4">
-                    Nesta aba você detalha o passo a passo da entrevista, dinâmica de grupo,
-                    como se apresentar, postura, comunicação, aparência, inglês na seleção e
-                    respostas estratégicas para as perguntas mais comuns.
-                </p>
-            </div>
-        </section>
-
-        <!-- Banner inferior -->
-        <div class="ads-banner px-4 py-4 mt-2">
-            <p class="text-[10px] text-gray-500 mb-1">Banner inferior — espaço para anúncio</p>
-            <div class="h-16 flex items-center justify-center text-gray-300 text-sm">
-                Anúncio Aqui — Faixa inferior
-            </div>
-        </div>
-
-    </main>
-
-    <!-- SCRIPT SUPABASE + TABS -->
+<!-- 🔹 BANNER SUPERIOR -->
+<div class="w-full px-4 pt-4 max-w-3xl mx-auto">
+  <p class="ad-label">Top Banner</p>
+  <div class="ad-slot h-12">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-SEU_ID_AQUI"
+         data-ad-slot="1111111111"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
     <script>
-        // ====== SUPABASE CLIENT ======
-        const supabaseClient = window.supabase.createClient(
-            "https://rzgdbjdxvzksbbwjwunr.supabase.co",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Z2RiamR4dnprc2Jid2p3dW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzODAzMTEsImV4cCI6MjA3ODk1NjMxMX0.cslxIWp5V-FhufQUZyIGi-6xD4ZfBKJKqFRgwlSnDyM"
-        );
-
-        // nome da tabela onde o painel de gestão salva o conteúdo do botão
-        // "Redação conteúdo comissário"
-        const TABELA_COMISSARIO = "conteudo_comissario"; // ajuste se você usou outro nome
-
-        const lockMessage = document.getElementById("lock-message");
-        const mainContent = document.getElementById("main-content");
-        const userLabel = document.getElementById("user-label");
-        const avatarLetter = document.getElementById("user-avatar-letter");
-
-        // ====== CARREGAR CONTEÚDOS DA TABELA ======
-        async function carregarConteudosComissario() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from(TABELA_COMISSARIO)
-                    .select("id, menu_id, momento, titulo, conteudo, updated_at")
-                    .order("updated_at", { ascending: false });
-
-                if (error) {
-                    console.error("Erro ao carregar conteúdos do comissário:", error);
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    // sem registros -> fica o texto padrão
-                    return;
-                }
-
-                // pega sempre o registro mais recente por menu (momento_1, momento_2, etc.)
-                const latestByMenu = {};
-                data.forEach((row) => {
-                    const key = row.menu_id || row.momento || row.menu; // tenta achar o campo que você usou
-                    if (!key) return;
-                    if (!latestByMenu[key]) {
-                        latestByMenu[key] = row;
-                    }
-                });
-
-                function aplicarConteudo(momentoId, menuKey, fallbackTitulo, fallbackTexto) {
-                    const row = latestByMenu[menuKey];
-                    const tituloEl = document.getElementById(`titulo-${momentoId}`);
-                    const textoEl = document.getElementById(`texto-${momentoId}`);
-                    if (!tituloEl || !textoEl) return;
-
-                    if (!row) {
-                        // se não tiver conteúdo para esse menu, mantém texto padrão
-                        tituloEl.textContent = fallbackTitulo;
-                        textoEl.textContent = fallbackTexto;
-                    } else {
-                        tituloEl.textContent = row.titulo || fallbackTitulo;
-                        // se quiser permitir HTML, troque por innerHTML
-                        textoEl.textContent = row.conteudo || fallbackTexto;
-                    }
-                }
-
-                aplicarConteudo(
-                    "momento-1",
-                    "momento_1",
-                    "O que saber antes de qualquer coisa?",
-                    "Aqui você pode colocar o conteúdo introdutório: visão geral da profissão, rotina de comissário, mitos e verdades, pré-requisitos básicos, saúde, idiomas, como funciona o mercado e o que já dá para ir se preparando hoje."
-                );
-
-                aplicarConteudo(
-                    "momento-2",
-                    "momento_2",
-                    "O que estudar para a certificação?",
-                    "Nesta aba entram os temas da prova da ANAC, material de estudo recomendado, simulados, tempo de preparação, como organizar o cronograma e dicas práticas para memorizar normas e procedimentos."
-                );
-
-                aplicarConteudo(
-                    "momento-3",
-                    "momento_3",
-                    "O que saber depois da certificação?",
-                    "Aqui você fala sobre o que acontece depois da aprovação: como usar o CHT, como montar currículo, onde buscar oportunidades, processos internos das cias aéreas e o que esperar dos primeiros meses na profissão."
-                );
-
-                aplicarConteudo(
-                    "momento-4",
-                    "momento_4",
-                    "Como passar na entrevista?",
-                    "Nesta aba você detalha o passo a passo da entrevista, dinâmica de grupo, como se apresentar, postura, comunicação, aparência, inglês na seleção e respostas estratégicas para as perguntas mais comuns."
-                );
-            } catch (e) {
-                console.error("Erro inesperado ao carregar conteúdos:", e);
-            }
-        }
-
-        // ====== PROTEÇÃO DE ROTA ======
-        async function proteger() {
-            const { data } = await supabaseClient.auth.getSession();
-
-            if (!data || !data.session) {
-                lockMessage.classList.remove("hidden");
-                mainContent.classList.add("hidden");
-                return;
-            }
-
-            const user = data.session.user;
-            const name = user.user_metadata?.nome || user.email.split("@")[0];
-            userLabel.textContent = name;
-            avatarLetter.textContent = name[0].toUpperCase();
-
-            lockMessage.classList.add("hidden");
-            mainContent.classList.remove("hidden");
-
-            // depois de liberar o acesso, carrega os textos da trilha
-            carregarConteudosComissario();
-        }
-
-        proteger();
-
-        // ----- LÓGICA DAS ABAS -----
-        const tabButtons = document.querySelectorAll(".tab-btn");
-        const contents = document.querySelectorAll(".moment-content");
-
-        tabButtons.forEach(btn => {
-            btn.addEventListener("click", () => {
-                const targetId = btn.getAttribute("data-target");
-
-                // ativa/desativa botões
-                tabButtons.forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                // mostra/oculta conteúdos
-                contents.forEach(section => {
-                    if (section.id === targetId) {
-                        section.classList.remove("hidden");
-                    } else {
-                        section.classList.add("hidden");
-                    }
-                });
-            });
-        });
+      (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
+  </div>
+</div>
+
+<!-- 🔹 CONTEÚDO CENTRAL -->
+<main class="max-w-3xl mx-auto mt-5 px-4 space-y-7">
+
+  <!-- CARD PRINCIPAL -->
+  <section class="card">
+    <p class="text-[11px] uppercase tracking-[0.25em] text-slate-300 mb-1">
+      Resultado da Simulação
+    </p>
+
+    <h1 class="text-3xl font-extrabold title-gradient" id="tituloDestino">
+      —
+    </h1>
+    <p class="text-[13px] text-slate-300 mt-1" id="subinfoMes">—</p>
+
+    <!-- VALOR FINAL -->
+    <div class="text-center mt-7 mb-8">
+      <p class="text-[13px] text-slate-300 mb-1">Custo mensal estimado:</p>
+
+      <h2 class="text-5xl font-extrabold text-indigo-400 drop-shadow-sm" id="valorFinal">
+        —
+      </h2>
+
+      <p class="text-[12px] mt-2 text-slate-400">
+        Estimativa para 1 adulto • Vida moderada
+      </p>
+    </div>
+
+    <!-- Banner interno -->
+    <p class="ad-label">In-Card Banner</p>
+    <div class="ad-slot h-16">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="2222222222"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <!-- Itens considerados -->
+    <div class="mt-8">
+      <h3 class="text-sm font-semibold text-white mb-2">
+        O que está dentro desse valor:
+      </h3>
+
+      <ul class="text-[13px] text-slate-300 space-y-1.5 list-disc list-inside">
+        <li>Aluguel médio no destino</li>
+        <li>Mercado e itens essenciais</li>
+        <li>Transporte público ou carro</li>
+        <li>Plano/seguro saúde</li>
+        <li>Internet, energia e serviços básicos</li>
+        <li>Academia / bem-estar</li>
+        <li>Lazer moderado</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- MID BANNER -->
+  <section>
+    <p class="ad-label">Mid Banner</p>
+    <div class="ad-slot h-20">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="3333333333"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </section>
+
+  <!-- CARD EXPLICATIVO -->
+  <section class="card">
+    <h3 class="text-sm font-semibold text-white mb-2">
+      Como usar esse resultado:
+    </h3>
+
+    <p class="text-[13px] text-slate-300 leading-relaxed mb-3">
+      Este valor serve como referência realista para sua mudança. Ele indica
+      quanto custa viver com conforto básico no destino escolhido.
+    </p>
+
+    <p class="text-[13px] text-slate-300 leading-relaxed mb-3">
+      Para um estilo mais econômico, considere 70–80%.
+      Para mais conforto, 120–140% é uma faixa ideal.
+    </p>
+
+    <p class="text-[12px] text-slate-400">
+      Em breve, você poderá conectar este resultado ao simulador de salário real,
+      custo de viagem e roteiros Nômade IQ.
+    </p>
+  </section>
+
+  <!-- NATIVE SPONSOR -->
+  <section>
+    <p class="ad-label">Native Content</p>
+    <div class="ad-slot h-20">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="4444444444"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS PASSOS -->
+  <section class="card mb-6">
+    <h3 class="text-sm font-semibold text-white mb-2">
+      Próximos passos:
+    </h3>
+
+    <ul class="text-[13px] text-slate-300 space-y-2 list-disc list-inside mb-4">
+      <li>Simular salário ideal para o destino</li>
+      <li>Comparar com outra cidade ou país</li>
+      <li>Calcular custo total da mudança</li>
+      <li>Planejar reserva de 3 a 6 meses</li>
+    </ul>
+
+    <div class="text-center">
+      <button
+        onclick="voltarCalculadora()"
+        class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md transition">
+        Voltar à Calculadora
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- 🔹 BANNER FIXO INFERIOR -->
+<div class="banner-bottom-fixed py-2 px-4">
+  <div class="max-w-3xl mx-auto">
+    <p class="ad-label">Footer Fixed</p>
+    <div class="ad-slot h-12">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-SEU_ID_AQUI"
+           data-ad-slot="5555555555"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lê parâmetros da URL
+  const params = new URLSearchParams(window.location.search);
+  const destino = params.get("destino") || "Destino não informado";
+  const mes = params.get("mes") || "Momento não informado";
+
+  document.getElementById("tituloDestino").textContent = destino;
+  document.getElementById("subinfoMes").textContent = "Planejado para: " + mes;
+
+  // Valor (placeholder) até integrar API/IA
+  const valor = Math.floor(Math.random()*5000) + 4000;
+  document.getElementById("valorFinal").textContent =
+    "R$ " + valor.toLocaleString("pt-BR");
+
+  // Voltar com fallback
+  function voltarCalculadora() {
+    const fallback = "custo-vida.html"; // 🔁 Troque para o NOME REAL da calculadora
+
+    if (document.referrer) {
+      history.back();
+    } else {
+      window.location.href = fallback;
+    }
+  }
+</script>
 
 </body>
 </html>
