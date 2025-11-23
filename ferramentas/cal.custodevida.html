@@ -8,6 +8,9 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
@@ -389,6 +392,40 @@
 
   <!-- SCRIPT -->
   <script>
+    // ================= SUPABASE CLIENT =================
+    const SUPABASE_URL = "https://rzgdbjdxvzksbbwjwunr.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Z2RiamR4dnprc2Jid2p3dW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzODAzMTEsImV4cCI6MjA3ODk1NjMxMX0.cslxIWp5V-FhufQUZyIGi-6xD4ZfBKJKqFRgwlSnDyM";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const TABELA_MALA = "calc_mala_custo";
+
+    async function salvarSimulacaoNoSupabase(payload, totais) {
+      try {
+        const userEmail = localStorage.getItem("userEmail") || null;
+
+        const { error } = await supabaseClient.from(TABELA_MALA).insert({
+          destino: payload.destino,
+          dias: payload.dias,
+          padrao: payload.padrao,
+          clima: payload.clima,
+          tipo_viagem: payload.tipo_viagem,
+          ja_tem_basicos: payload.ja_tem_basicos,
+          moeda: payload.moeda,
+          total_moeda_base: totais.total_moeda_base || null,
+          total_brl: totais.total_brl || null,
+          user_email: userEmail,
+        });
+
+        if (error) {
+          console.error("Erro ao salvar calc_mala_custo:", error);
+        }
+      } catch (e) {
+        console.error("Erro inesperado ao salvar calc_mala_custo:", e);
+      }
+    }
+
+    // ================ ELEMENTOS DA PÁGINA ==================
     const formMala = document.getElementById("mala-form");
     const destinoInput = document.getElementById("destino");
     const diasInput = document.getElementById("dias");
@@ -411,7 +448,7 @@
     const totalBrLEl = document.getElementById("total-brl");
 
     // Endpoint da sua API com Gemini
-    const API_URL = "http://localhost:8000/api/mala-custo"; // ajuste para sua rota real
+    const API_URL = "http://localhost:8000/api/mala-custo"; // ajuste para a rota no backend (Render depois)
 
     function setLoading(isLoading) {
       btnCalcular.disabled = isLoading;
@@ -522,6 +559,12 @@
         card.appendChild(right);
         listaItens.appendChild(card);
       });
+
+      // Retorna totais para quem chamou (para salvar no Supabase)
+      return {
+        total_moeda_base: totalMoedaBase,
+        total_brl: totalBRL,
+      };
     }
 
     // fallback simples se a API falhar (modo offline)
@@ -588,6 +631,16 @@
         return;
       }
 
+      const payloadBasico = {
+        destino,
+        dias,
+        padrao,
+        clima,
+        tipo_viagem,
+        ja_tem_basicos,
+        moeda,
+      };
+
       setLoading(true);
       setStatus("Consultando IA para montar a mala ideal...", "info");
       limparResultados();
@@ -598,15 +651,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            destino,
-            dias,
-            padrao,
-            clima,
-            tipo_viagem,
-            ja_tem_basicos,
-            moeda,
-          }),
+          body: JSON.stringify(payloadBasico),
         });
 
         if (!resp.ok) {
@@ -614,13 +659,22 @@
         }
 
         const data = await resp.json();
-        renderResultados(data);
+        const totais = renderResultados(data) || { total_moeda_base: null, total_brl: null };
         setStatus("Simulação concluída com sucesso.", "success");
+
+        // Salva simulação no Supabase
+        salvarSimulacaoNoSupabase(payloadBasico, totais);
       } catch (err) {
         console.error(err);
         const mock = gerarMock(destino, dias, padrao, clima, tipo_viagem, moeda);
-        renderResultados(mock);
+        const totaisMock = renderResultados(mock) || {
+          total_moeda_base: mock.total_moeda_base,
+          total_brl: mock.total_brl,
+        };
         setStatus("API indisponível. Usando estimativa offline aproximada.", "info");
+
+        // Mesmo em modo offline, salvamos a simulação
+        salvarSimulacaoNoSupabase(payloadBasico, totaisMock);
       } finally {
         setLoading(false);
       }

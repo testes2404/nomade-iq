@@ -8,6 +8,9 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
   <style>
     body {
       background: #000000;
@@ -118,10 +121,10 @@
         <p class="text-[11px] text-slate-500 mb-3">Ajuda a IA entender sua faixa de consumo.</p>
 
         <div class="space-y-3">
-          <select class="w-full border rounded-xl px-3 py-2">
-            <option>Padrão básico</option>
-            <option>Padrão moderado</option>
-            <option>Padrão elevado</option>
+          <select id="padraoVida" class="w-full border rounded-xl px-3 py-2">
+            <option value="basico">Padrão básico</option>
+            <option value="moderado">Padrão moderado</option>
+            <option value="elevado">Padrão elevado</option>
           </select>
         </div>
 
@@ -138,10 +141,10 @@
         <p class="text-[11px] text-slate-500 mb-3">Somente estético, mas ajuda a alongar o fluxo.</p>
 
         <div class="space-y-3">
-          <select class="w-full border rounded-xl px-3 py-2">
-            <option>Morar sozinho</option>
-            <option>Morar com parceiro(a)</option>
-            <option>Morar com família</option>
+          <select id="tipoMoradia" class="w-full border rounded-xl px-3 py-2">
+            <option value="sozinho">Morar sozinho</option>
+            <option value="parceiro">Morar com parceiro(a)</option>
+            <option value="familia">Morar com família</option>
           </select>
         </div>
 
@@ -162,6 +165,8 @@
         >
           Calcular custo de vida
         </button>
+
+        <p id="status-salvar" class="mt-2 text-[11px] text-slate-500 min-h-[1rem]"></p>
 
         <div class="mt-4">
           <p class="ad-label">Bottom Banner Interno</p>
@@ -210,25 +215,71 @@
   </div>
 
 <script>
-function calcular() {
-  const destino = document.getElementById("destino").value.trim();
-  const mes = document.getElementById("mes").value.trim();
+  // ================= SUPABASE =================
+  const SUPABASE_URL = "https://rzgdbjdxvzksbbwjwunr.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Z2RiamR4dnprc2Jid2p3dW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzODAzMTEsImV4cCI6MjA3ODk1NjMxMX0.cslxIWp5V-FhufQUZyIGi-6xD4ZfBKJKqFRgwlSnDyM";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  if (!destino || !mes) {
-    alert("Preencha o destino e o momento da viagem.");
-    return;
+  const statusLabel = document.getElementById("status-salvar");
+
+  function setStatus(msg, tipo = "info") {
+    statusLabel.textContent = msg || "";
+    statusLabel.classList.remove("text-slate-500", "text-emerald-500", "text-rose-500");
+    if (!msg) return;
+    if (tipo === "ok") statusLabel.classList.add("text-emerald-500");
+    else if (tipo === "erro") statusLabel.classList.add("text-rose-500");
+    else statusLabel.classList.add("text-slate-500");
   }
 
-  // Rolar até área de anúncios igual ao original
-  const anchor = document.getElementById("anchor-anuncios");
-  anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+  // ================= FUNÇÃO CALCULAR =================
+  async function calcular() {
+    const destino = document.getElementById("destino").value.trim();
+    const mes = document.getElementById("mes").value.trim();
+    const padraoVida = document.getElementById("padraoVida").value;
+    const tipoMoradia = document.getElementById("tipoMoradia").value;
 
-  const url = `resultado-exterior-brasil.html?destino=${encodeURIComponent(destino)}&mes=${encodeURIComponent(mes)}`;
+    if (!destino || !mes) {
+      alert("Preencha o destino e o momento da viagem.");
+      return;
+    }
 
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1600);
-}
+    // dados extras (se já estiver usando em outras telas)
+    const userEmail = localStorage.getItem("userEmail") || null;
+
+    try {
+      setStatus("Salvando consulta no painel...", "info");
+
+      const { error } = await supabaseClient
+        .from("calc_custo_vida")
+        .insert({
+          destino,
+          mes,
+          padrao_vida: padraoVida,
+          tipo_moradia: tipoMoradia,
+          user_email: userEmail,
+        });
+
+      if (error) {
+        console.error(error);
+        setStatus("Não foi possível salvar a consulta (mas a calculadora continua).", "erro");
+      } else {
+        setStatus("Consulta registrada para análise no painel.", "ok");
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus("Erro inesperado ao salvar consulta.", "erro");
+    }
+
+    // Rolar até área de anúncios igual ao original
+    const anchor = document.getElementById("anchor-anuncios");
+    anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    const url = `resultado-exterior-brasil.html?destino=${encodeURIComponent(destino)}&mes=${encodeURIComponent(mes)}`;
+
+    setTimeout(() => {
+      window.location.href = url;
+    }, 1600);
+  }
 </script>
 
 </body>
